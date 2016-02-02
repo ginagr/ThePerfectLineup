@@ -26,6 +26,8 @@ In order to make the app work for development, do the following steps:
 ```
 git status
 ```
+Nothing should show up, it should merely tell you taht your project is up to date and that your working directory is clean.
+
 10. Run the project!
 
     [You must have Git installed on your computer to use the VCS]
