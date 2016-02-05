@@ -9,13 +9,15 @@
         android:layout_width="155dp"
         android:layout_height="wrap_content"
         android:layout_weight="1.25">
+
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
                       android:orientation="vertical"
                       android:layout_weight="1"
-                      android:id="@+id/starboardRowerLinearLayout">
+                      android:id="@+id/leftBracketLinearLayout">
         </LinearLayout>
+
     </ScrollView>
 
 
@@ -26,8 +28,7 @@
                   android:orientation="vertical"
                   android:paddingLeft="20dp"
                   android:paddingRight="0dp"
-                  android:id="@+id/boatLinearLayout"
-        >
+                  android:id="@+id/lineupLinearLayout">
 
     </LinearLayout>
 
@@ -40,7 +41,7 @@
                       android:layout_height="wrap_content"
                       android:orientation="vertical"
                       android:layout_weight="1"
-                      android:id="@+id/portRowerLinearLayout">
+                      android:id="@+id/rightBracketLinearLayout">
         </LinearLayout>
     </ScrollView>
 
