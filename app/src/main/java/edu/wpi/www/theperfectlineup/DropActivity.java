@@ -11,69 +11,74 @@ import android.view.View;
 import android.view.View.DragShadowBuilder;
 import android.view.View.OnDragListener;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.LinearLayout;
 
+
 public class DropActivity extends AppCompatActivity {
 
-    private int numOfRowers = 15;        //TODO fill with roster data
-    private TextView[] portRowers = new TextView[numOfRowers];  //TODO add textView to portrower obj
-    private TextView[] starRowers = new TextView[numOfRowers];
+    private User mUser = new User("Rowing");//TODO this is a mock user with rowing.
+
+    private Athlete[] mAthletes = new Athlete[]{
+        new Athlete("Athlete 1", 21),
+                new Athlete("Athlete 2", 24),
+                new Athlete("Athlete 3", 21),
+                new Athlete("Athlete 4", 27),
+                new Athlete("Athlete 5", 18),
+                new Athlete("Athlete 6", 17),
+                new Athlete("Athlete 7", 15),
+                new Athlete("Athlete 8", 19),
+                new Athlete("Athlete 9", 17),
+                new Athlete("Athlete 10", 17),
+                new Athlete("Athlete 11", 20),
+                new Athlete("Athlete 12", 22),
+                new Athlete("Athlete 13", 21),}; //TODO remove an dreplace with actual database. This is a mock
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drop);
-
         Display display = getWindowManager().getDefaultDisplay();
         int width = display.getWidth();
-
-        addRowers(width);
-
+        LinearLayout layout1 = (LinearLayout) findViewById(R.id.leftBracketLinearLayout);
+        LinearLayout layout2 = (LinearLayout) findViewById(R.id.rightBracketLinearLayout);
+        addAthletes(layout1, mAthletes,width);
+        addAthletes(layout2, mAthletes, width);
         addBoat(width);
         TextView temp = new TextView(this);
     }
 
-    public void addRowers(int width)
-    {
-        //TODO call either port or starboard method by id
 
-        LinearLayout layout = (LinearLayout)findViewById(R.id.portRowerLinearLayout);
-        layout.setScrollContainer(true);
+//    This method adds all athletes in a roster to the view.
+// It takes in a viewGroup we want to attach to and an array of athletes
 
-        for (int i = 0; i < numOfRowers; i++)
-        {
-            portRowers[i] = new TextView(this);     //TODO initialize in portrower object
-            portRowers[i].setText("Rower " + i);    //TODO change i to name attribute
-            portRowers[i].setBackgroundResource(R.drawable.portrower);
-            portRowers[i].setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
-            portRowers[i].setWidth((int) (width / 3 * .85));
-            portRowers[i].setHeight((int) (width / 3 * .85) / 2);
-            portRowers[i].setMaxLines(2);
-            portRowers[i].setOnTouchListener(new ChoiceTouchListener());
-            layout.addView(portRowers[i]);
-        }
 
-        LinearLayout layout2 = (LinearLayout)findViewById(R.id.starboardRowerLinearLayout);
-        layout2.setScrollContainer(true);
+    public void addAthletes(ViewGroup view, Athlete[] athleteArr, int width) {
+        view.setScrollContainer(true);
 
-        for (int i = 0; i < numOfRowers; i++)
-        {
-            starRowers[i] = new TextView(this);     //TODO initialize in portrower object
-            starRowers[i].setText("Rower " + i);    //TODO change i to name attribute
-            starRowers[i].setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
-            starRowers[i].setBackgroundResource(R.drawable.starboardrower);
-            starRowers[i].setWidth((int)(width/3*.85));
-            starRowers[i].setHeight((int)(width/3*.85)/2);
-            starRowers[i].setMaxLines(3);
-            starRowers[i].setOnTouchListener(new ChoiceTouchListener());
-            layout2.addView(starRowers[i]);
+        for (int i = 0; i < athleteArr.length; i++) {
+            TextView[] viewAthletes = new TextView[athleteArr.length];  //TODO add textView to portrower obj
+                        viewAthletes[i] = new TextView(this);     //TODO initialize in portrower object -> Why important
+            viewAthletes[i].setText(athleteArr[i].getName());    //TODO change i to name attribute
+            viewAthletes[i].setBackgroundResource(R.drawable.portrower);// TODO should eventually be replaced by Icon that is usable in multiple sports
+            viewAthletes[i].setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
+            viewAthletes[i].setWidth((int) (width / 3 * .85));
+            viewAthletes[i].setHeight((int) (width / 3 * .85) / 2);
+            viewAthletes[i].setMaxLines(2);
+            viewAthletes[i].setId(989023490+i);//needed some unique tag for athletes.
+            viewAthletes[i].setOnTouchListener(new ChoiceTouchListener());
+            view.addView(viewAthletes[i]);
         }
     }
 
+
+
     public void addBoat(int width)
     {
-        LinearLayout layout = (LinearLayout)findViewById(R.id.boatLinearLayout);
+        LinearLayout layout = (LinearLayout)findViewById(R.id.lineupLinearLayout);
         layout.setScrollContainer(true);
         TextView temp = new TextView(this);
         temp.setText("Cox");
@@ -172,10 +177,12 @@ public class DropActivity extends AppCompatActivity {
                         //the tag is the view id already dropped here
                         int existingID = (Integer)tag;
                         //set the original view visible again
-                        findViewById(existingID).setVisibility(View.VISIBLE);
+                        View existView = findViewById(existingID);
+                                existView.setVisibility(View.VISIBLE);
                     }
                     //set the tag in the target view to the ID of the view being dropped
-                    dropTarget.setTag(dropped.getId());
+                    Integer test = dropped.getId();
+                    dropTarget.setTag(test);
 
                     break;
                 case DragEvent.ACTION_DRAG_ENDED:

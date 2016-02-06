@@ -17,7 +17,7 @@
                           android:layout_height="wrap_content"
                           android:orientation="vertical"
 
-                          android:id="@+id/starboardRowerLinearLayout">
+                          android:id="@+id/leftBracketLinearLayout">
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
@@ -28,7 +28,7 @@
                   android:layout_height="match_parent"
                   android:layout_weight="1.5"
                   android:orientation="vertical"
-                  android:id="@+id/boatLinearLayout">
+                  android:id="@+id/lineupLinearLayout">
     </LinearLayout>
 
     <LinearLayout
@@ -43,7 +43,7 @@
                           android:layout_height="wrap_content"
                           android:orientation="vertical"
 
-                          android:id="@+id/portRowerLinearLayout">
+                          android:id="@+id/rightBracketLinearLayout">
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
