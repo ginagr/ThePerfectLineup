@@ -65,6 +65,7 @@ public class DropActivity extends AppCompatActivity {
             viewAthletes[i].setWidth(450);
             viewAthletes[i].setHeight(250);
             viewAthletes[i].setMaxLines(2);
+            viewAthletes[i].setId(989023490+i);//needed some unique tag for athletes.
             viewAthletes[i].setOnTouchListener(new ChoiceTouchListener());
             view.addView(viewAthletes[i]);
         }
@@ -173,7 +174,8 @@ public class DropActivity extends AppCompatActivity {
                                 existView.setVisibility(View.VISIBLE);
                     }
                     //set the tag in the target view to the ID of the view being dropped
-                    dropTarget.setTag(dropped.getId());
+                    Integer test = dropped.getId();
+                    dropTarget.setTag(test);
 
                     break;
                 case DragEvent.ACTION_DRAG_ENDED:
