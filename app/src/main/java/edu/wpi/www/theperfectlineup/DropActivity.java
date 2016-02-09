@@ -1,4 +1,6 @@
 package edu.wpi.www.theperfectlineup;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.ClipData;
@@ -14,6 +16,7 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 
 public class DropActivity extends AppCompatActivity {
@@ -37,6 +40,7 @@ public class DropActivity extends AppCompatActivity {
 
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +55,20 @@ public class DropActivity extends AppCompatActivity {
         TextView temp = new TextView(this);
     }
 
+    public boolean alertUser (String title,String msg) {
+        final boolean[] mResult = {false};//default as false
+        new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(msg)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        mResult[0] = true;
+                    }})
+                .setNegativeButton(android.R.string.no, null).show();
+        return mResult[0];
+    }
 
 //    This method adds all athletes in a roster to the view.
 // It takes in a viewGroup we want to attach to and an array of athletes
@@ -183,13 +201,14 @@ public class DropActivity extends AppCompatActivity {
                     //if there is already an item here, set it back visible in its original place
                     if(tag!=null)
                     {
-                        //the tag is the view id already dropped here
-                        int existingID = (Integer)tag;
-                        //set the original view visible again
-                        View existView = findViewById(existingID);
-                                existView.setVisibility(View.VISIBLE);
-                                resetView(existView);
-
+                        if (alertUser("Warning!","Do you want to replace this Athlete?")) {
+                            //the tag is the view id already dropped here
+                            int existingID = (Integer) tag;
+                            //set the original view visible again
+                            View existView = findViewById(existingID);
+                            existView.setVisibility(View.VISIBLE);
+                            resetView(existView);
+                        }
                     }
                     //set the tag in the target view to the ID of the view being dropped
                     Integer test = dropped.getId();
