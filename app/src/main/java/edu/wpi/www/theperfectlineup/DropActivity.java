@@ -42,7 +42,7 @@ public class DropActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drop);
         Display display = getWindowManager().getDefaultDisplay();
-        int width = display.getWidth();
+        int width = display.getWidth();//This is depereceated
         LinearLayout layout1 = (LinearLayout) findViewById(R.id.leftBracketLinearLayout);
         LinearLayout layout2 = (LinearLayout) findViewById(R.id.rightBracketLinearLayout);
         addAthletes(layout1, mAthletes,width);
@@ -68,7 +68,7 @@ public class DropActivity extends AppCompatActivity {
             viewAthletes[i].setWidth((int) (width / 3 * .85));
             viewAthletes[i].setHeight((int) (width / 3 * .85) / 2);
             viewAthletes[i].setMaxLines(2);
-            viewAthletes[i].setId(989023490+i);//needed some unique tag for athletes.
+            viewAthletes[i].setId(989023490 + i);//needed some unique tag for athletes.
             viewAthletes[i].setOnTouchListener(new ChoiceTouchListener());
             view.addView(viewAthletes[i]);
         }
@@ -129,23 +129,32 @@ public class DropActivity extends AppCompatActivity {
     }
 
     private class ChoiceDragListener implements OnDragListener {
+
+        //A helper to reset the view
+        private void resetView (View view) {
+            view.setAlpha(1);
+            view.setEnabled(true);
+        }
+
         @Override
         public boolean onDrag(View v, DragEvent event) {
+            View view = (View) event.getLocalState();
             switch (event.getAction()) {
                 case DragEvent.ACTION_DRAG_STARTED:
                     //no action necessary
                     break;
                 case DragEvent.ACTION_DRAG_ENTERED:
                     //no action necessary
+                    //grey out oar
+                    view.setAlpha((float) 0.5);
                     break;
                 case DragEvent.ACTION_DRAG_EXITED:
                     //no action necessary
+                    resetView(view);
                     break;
                 case DragEvent.ACTION_DROP:
                     //handle the dragged view being dropped over a target view
-                    View view = (View) event.getLocalState();
-                    //grey out oar
-                    view.setAlpha((float)0.5);
+                    view.setEnabled(false);
                     //view dragged item is being dropped on
                     TextView dropTarget = (TextView) v;
                     //view being dragged and dropped
@@ -179,6 +188,8 @@ public class DropActivity extends AppCompatActivity {
                         //set the original view visible again
                         View existView = findViewById(existingID);
                                 existView.setVisibility(View.VISIBLE);
+                                resetView(existView);
+
                     }
                     //set the tag in the target view to the ID of the view being dropped
                     Integer test = dropped.getId();
