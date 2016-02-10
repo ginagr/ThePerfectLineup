@@ -23,7 +23,7 @@ public class DropActivity extends AppCompatActivity {
 
     private User mUser = new User("Rowing");//TODO this is a mock user with rowing.
 
-    private Athlete[] mAthletes = new Athlete[]{
+    private Athlete[] mAthletesLeft = new Athlete[]{
         new Athlete("Athlete 1", 21),
                 new Athlete("Athlete 2", 24),
                 new Athlete("Athlete 3", 21),
@@ -37,7 +37,20 @@ public class DropActivity extends AppCompatActivity {
                 new Athlete("Athlete 11", 20),
                 new Athlete("Athlete 12", 22),
                 new Athlete("Athlete 13", 21),}; //TODO remove an dreplace with actual database. This is a mock
-
+    private Athlete[] mAthletesRight = new Athlete[]{
+            new Athlete("Athlete 14", 21),
+            new Athlete("Athlete 15", 24),
+            new Athlete("Athlete 16", 21),
+            new Athlete("Athlete 17", 27),
+            new Athlete("Athlete 18", 18),
+            new Athlete("Athlete 19", 17),
+            new Athlete("Athlete 20", 15),
+            new Athlete("Athlete 21", 19),
+            new Athlete("Athlete 22", 17),
+            new Athlete("Athlete 23", 17),
+            new Athlete("Athlete 24", 20),
+            new Athlete("Athlete 25", 22),
+            new Athlete("Athlete 26", 21),}; //TODO remove an dreplace with actual database. This is a mock
 
 
 
@@ -49,14 +62,14 @@ public class DropActivity extends AppCompatActivity {
         int width = display.getWidth();//This is depereceated
         LinearLayout layout1 = (LinearLayout) findViewById(R.id.leftBracketLinearLayout);
         LinearLayout layout2 = (LinearLayout) findViewById(R.id.rightBracketLinearLayout);
-        addAthletes(layout1, mAthletes,width);
-        addAthletes(layout2, mAthletes, width);
+        addAthletes(layout1, mAthletesLeft,width);
+        addAthletes(layout2, mAthletesRight, width);
         addBoat(width);
         TextView temp = new TextView(this);
     }
 
-    public boolean alertUser (String title,String msg) {
-        final boolean[] mResult = {false};//default as false
+    public void alertUser (String title,String msg, final Runnable ifTrue, final Runnable ifFalse) {
+        final boolean mResult = false;//default as false
         new AlertDialog.Builder(this)
                 .setTitle(title)
                 .setMessage(msg)
@@ -64,10 +77,15 @@ public class DropActivity extends AppCompatActivity {
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        mResult[0] = true;
+                        ifTrue.run();
+
                     }})
-                .setNegativeButton(android.R.string.no, null).show();
-        return mResult[0];
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ifFalse.run();
+                    }
+                }).show();
     }
 
 //    This method adds all athletes in a roster to the view.
@@ -154,9 +172,33 @@ public class DropActivity extends AppCompatActivity {
             view.setEnabled(true);
         }
 
+        private void setAthlete(TextView dropped, TextView dropTarget){
+            dropTarget.setText(dropped.getText());
+            dropTarget.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
+            //  String temp = dropped.getText().toString();
+            // temp = temp.charAt(temp.length()-1);
+            //  int temp2 = Integer.parseInt(temp);
+            if(dropped.getMaxLines() == 2){
+                dropTarget.setBackgroundResource(R.drawable.portrower);
+            }
+            else {
+                dropTarget.setBackgroundResource(R.drawable.starboardrower);
+            }
+
+            Display display = getWindowManager().getDefaultDisplay();
+            int width = display.getWidth();
+            dropTarget.setWidth((int) (width / 3 * .85));
+            dropTarget.setHeight((int) (width / 3 * .85) / 2);
+            dropTarget.setPaddingRelative(0, 0, 0, 0);
+            //make it bold to highlight the fact that an item has been dropped
+            dropTarget.setTypeface(Typeface.DEFAULT_BOLD);
+            Integer id = dropped.getId();
+            dropTarget.setTag(id);
+        }
+
         @Override
         public boolean onDrag(View v, DragEvent event) {
-            View view = (View) event.getLocalState();
+            final View view = (View) event.getLocalState();
             switch (event.getAction()) {
                 case DragEvent.ACTION_DRAG_STARTED:
                     //no action necessary
@@ -174,45 +216,38 @@ public class DropActivity extends AppCompatActivity {
                     //handle the dragged view being dropped over a target view
                     view.setEnabled(false);
                     //view dragged item is being dropped on
-                    TextView dropTarget = (TextView) v;
-                    //view being dragged and dropped
-                    TextView dropped = (TextView) view;
-                    //update the text in the target view to reflect the data being dropped
-                    dropTarget.setText(dropped.getText());
-                    dropTarget.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
-                    //  String temp = dropped.getText().toString();
-                    // temp = temp.charAt(temp.length()-1);
-                    //  int temp2 = Integer.parseInt(temp);
-                    if(dropped.getMaxLines() == 2){
-                        dropTarget.setBackgroundResource(R.drawable.portrower);
-                    }
-                    else {
-                        dropTarget.setBackgroundResource(R.drawable.starboardrower);
-                    }
-                    Display display = getWindowManager().getDefaultDisplay();
-                    int width = display.getWidth();
-                    dropTarget.setWidth((int) (width / 3 * .85));
-                    dropTarget.setHeight((int) (width / 3 * .85) / 2);
-                    dropTarget.setPaddingRelative(0, 0, 0, 0);
-                    //make it bold to highlight the fact that an item has been dropped
-                    dropTarget.setTypeface(Typeface.DEFAULT_BOLD);
+                    final TextView dropTarget = (TextView) v;
                     //if an item has already been dropped here, there will be a tag
-                    Object tag = dropTarget.getTag();
-                    //if there is already an item here, set it back visible in its original place
-                    if(tag!=null)
+                    final Object tag = dropTarget.getTag();
+                    //view being dragged and dropped
+                    final TextView dropped = (TextView) view;
+                    //update the text in the target view to reflect the data being dropped
+                    if (tag!= null )
                     {
-                        if (alertUser("Warning!","Do you want to replace this Athlete?")) {
-                            //the tag is the view id already dropped here
-                            int existingID = (Integer) tag;
-                            //set the original view visible again
-                            View existView = findViewById(existingID);
-                            existView.setVisibility(View.VISIBLE);
-                            resetView(existView);
-                        }
+                        //ATHELTE ALREADY SET
+                        alertUser("Warning!", "Do you want to replace this Athlete?", new Runnable() {
+                            @Override
+                            public void run() {
+                                //YES IN WARNING
+                                //the tag is the view id already dropped here
+                                int existingID = (Integer) tag;
+                                //set the original view visible again
+                                View existView = findViewById(existingID);
+                                existView.setVisibility(View.VISIBLE);
+                                resetView(existView);
+                                //this will be triggered if the user decides he wants to replace the athlete
+                                setAthlete(dropped, dropTarget);
+                            }
+                        }, new Runnable() {
+                            @Override
+                            public void run() {
+                                resetView(view);
+                            }
+                        });
+                    } else {
+                        //NOTHING HAS BEEN SET YET
+                        setAthlete(dropped, dropTarget);
                     }
-                    //set the tag in the target view to the ID of the view being dropped
-                    Integer test = dropped.getId();
-                    dropTarget.setTag(test);
 
                     break;
                 case DragEvent.ACTION_DRAG_ENDED:
