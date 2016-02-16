@@ -1,5 +1,13 @@
 package edu.wpi.www.theperfectlineup;
 import android.content.DialogInterface;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,9 +22,10 @@ import android.view.View.DragShadowBuilder;
 import android.view.View.OnDragListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
+import com.makeramen.roundedimageview.RoundedImageView;
 
 
 public class DropActivity extends AppCompatActivity {
@@ -37,35 +46,20 @@ public class DropActivity extends AppCompatActivity {
                 new Athlete("Athlete 11", 20),
                 new Athlete("Athlete 12", 22),
                 new Athlete("Athlete 13", 21),}; //TODO remove an dreplace with actual database. This is a mock
-    private Athlete[] mAthletesRight = new Athlete[]{
-            new Athlete("Athlete 14", 21),
-            new Athlete("Athlete 15", 24),
-            new Athlete("Athlete 16", 21),
-            new Athlete("Athlete 17", 27),
-            new Athlete("Athlete 18", 18),
-            new Athlete("Athlete 19", 17),
-            new Athlete("Athlete 20", 15),
-            new Athlete("Athlete 21", 19),
-            new Athlete("Athlete 22", 17),
-            new Athlete("Athlete 23", 17),
-            new Athlete("Athlete 24", 20),
-            new Athlete("Athlete 25", 22),
-            new Athlete("Athlete 26", 21),}; //TODO remove an dreplace with actual database. This is a mock
-
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drop);
-        Display display = getWindowManager().getDefaultDisplay();
-        int width = display.getWidth();//This is depereceated
+        Point size = new Point();
+        Display display = this.getWindowManager().getDefaultDisplay();
+        display.getSize(size);
+        int width = size.x;//Width of display
+        int height = size.y;//height of display
         LinearLayout layout1 = (LinearLayout) findViewById(R.id.leftBracketLinearLayout);
-        LinearLayout layout2 = (LinearLayout) findViewById(R.id.rightBracketLinearLayout);
         addAthletes(layout1, mAthletesLeft,width);
-        addAthletes(layout2, mAthletesRight, width);
-        addBoat(width);
-        TextView temp = new TextView(this);
+        addBoat(width, height, 8);//TODO will have to get the boatSize from the chosen boat
     }
 
     public void alertUser (String title,String msg, final Runnable ifTrue, final Runnable ifFalse) {
@@ -94,16 +88,18 @@ public class DropActivity extends AppCompatActivity {
 
     public void addAthletes(ViewGroup view, Athlete[] athleteArr, int width) {
         view.setScrollContainer(true);
-
         for (int i = 0; i < athleteArr.length; i++) {
-            TextView[] viewAthletes = new TextView[athleteArr.length];  //TODO add textView to portrower obj
-                        viewAthletes[i] = new TextView(this);     //TODO initialize in portrower object -> Why important
-            viewAthletes[i].setText(athleteArr[i].getName());    //TODO change i to name attribute
-            viewAthletes[i].setBackgroundResource(R.drawable.portrower);// TODO should eventually be replaced by Icon that is usable in multiple sports
-            viewAthletes[i].setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
-            viewAthletes[i].setWidth((int) (width / 3 * .85));
-            viewAthletes[i].setHeight((int) (width / 3 * .85) / 2);
-            viewAthletes[i].setMaxLines(2);
+            RoundedImageView[] viewAthletes = new RoundedImageView[athleteArr.length];  //TODO add textView to portrower obj
+            RoundedImageView dropTarget = new RoundedImageView(this);
+            dropTarget.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            dropTarget.setCornerRadius((float) 10);
+            dropTarget.setBorderWidth((float) 2);
+            dropTarget.setBorderColor(Color.DKGRAY);
+            dropTarget.mutateBackground(true);
+            Drawable drawable = ContextCompat.getDrawable(this, R.drawable.profile_image);
+            dropTarget.setImageDrawable(drawable);
+            dropTarget.setOval(true);
+            viewAthletes[i]= dropTarget;
             viewAthletes[i].setId(989023490 + i);//needed some unique tag for athletes.
             viewAthletes[i].setOnTouchListener(new ChoiceTouchListener());
             view.addView(viewAthletes[i]);
@@ -112,38 +108,31 @@ public class DropActivity extends AppCompatActivity {
 
 
 
-    public void addBoat(int width)
+    public void addBoat(int width,int height, int boatSize)
     {
         LinearLayout layout = (LinearLayout)findViewById(R.id.lineupLinearLayout);
         layout.setScrollContainer(true);
-        TextView temp = new TextView(this);
-        temp.setText("Cox");
-        temp.setTextSize(1, 35);
-        temp.setBackgroundResource(R.drawable.cox);
-        temp.setWidth((int) (width / 3 * .85));
-        temp.setHeight((int) (width / 3 * .85) / 2);
-        temp.setOnDragListener(new ChoiceDragListener());
-        layout.addView(temp);
-        for (int i = 8; i > 0; i--)
+        //TextView name = new TextView(this);
+        TextView background = new TextView(this);
+
+        //name.setText("Cox");
+       // name.setTextSize(1, 35);
+        background.setBackgroundResource(R.drawable.grey_circle);
+        int diameter = ((height-(height/100*14))/(boatSize+1));//14% higher than the lowest point to avoid statusbar
+        LinearLayout.LayoutParams dynamicParams = new LinearLayout.LayoutParams(diameter,diameter);
+        background.setLayoutParams(dynamicParams);
+        background.setOnDragListener(new ChoiceDragListener());;
+        layout.addView(background);
+        for (int i = boatSize; i > 0; i--)
         {
-            temp = new TextView(this);
-            if (i % 2 != 0) {
-                temp.setText("" + i);
-                temp.setBackgroundResource(R.drawable.starboardrower_shadow);
-                temp.setWidth((int) (width / 3 * .85));
-                temp.setHeight((int) (width / 3 * .85) / 2);
-                temp.setTextSize(1, 35);
-                temp.setOnDragListener(new ChoiceDragListener());
-                layout.addView(temp);
-            } else {
-                temp.setText("" + i);
-                temp.setBackgroundResource(R.drawable.portrower_shadow);
-                temp.setWidth((int) (width / 3 * .85));
-                temp.setHeight((int) (width / 3 * .85) / 2);
-                temp.setTextSize(1, 35);
-                temp.setOnDragListener(new ChoiceDragListener());
-                layout.addView(temp);
-            }
+            background = new TextView(this);
+
+               // name.setText("Rower" + i);//TODO should eventually reference the sport
+                background.setBackgroundResource(R.drawable.grey_circle);
+                background.setLayoutParams(dynamicParams);
+                background.setOnDragListener(new ChoiceDragListener());
+             //   layout.addView(name);
+                layout.addView(background);
         }
     }
 
@@ -172,26 +161,33 @@ public class DropActivity extends AppCompatActivity {
             view.setEnabled(true);
         }
 
-        private void setAthlete(TextView dropped, TextView dropTarget){
-            dropTarget.setText(dropped.getText());
-            dropTarget.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
-            //  String temp = dropped.getText().toString();
-            // temp = temp.charAt(temp.length()-1);
-            //  int temp2 = Integer.parseInt(temp);
-            if(dropped.getMaxLines() == 2){
-                dropTarget.setBackgroundResource(R.drawable.portrower);
-            }
-            else {
-                dropTarget.setBackgroundResource(R.drawable.starboardrower);
-            }
+        private void setAthlete(View dropped, RoundedImageView dropTarget){
+//            dropTarget.setText(dropped.getText());
+//            dropTarget.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
+//            //  String temp = dropped.getText().toString();
+//            // temp = temp.charAt(temp.length()-1);
+//            //  int temp2 = Integer.parseInt(temp);
+//            if(dropped.getMaxLines() == 2){
+//                dropTarget.setBackgroundResource(R.drawable.portrower);
+//            }
+//            else {
+//                dropTarget.setBackgroundResource(R.drawable.starboardrower);
+//            }
+
+            dropTarget.setBackgroundResource(R.drawable.profile_image);
+            dropTarget.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            dropTarget.setCornerRadius((float) 10);
+            dropTarget.setBorderWidth((float) 2);
+            dropTarget.setBorderColor(Color.DKGRAY);
+            dropTarget.mutateBackground(true);
+            dropTarget.setOval(true);
 
             Display display = getWindowManager().getDefaultDisplay();
             int width = display.getWidth();
-            dropTarget.setWidth((int) (width / 3 * .85));
-            dropTarget.setHeight((int) (width / 3 * .85) / 2);
-            dropTarget.setPaddingRelative(0, 0, 0, 0);
+           // dropTarget.setWidth((int) (width / 3 * .85));
+           // dropTarget.setHeight((int) (width / 3 * .85) / 2);
             //make it bold to highlight the fact that an item has been dropped
-            dropTarget.setTypeface(Typeface.DEFAULT_BOLD);
+           // dropTarget.setTypeface(Typeface.DEFAULT_BOLD);
             Integer id = dropped.getId();
             dropTarget.setTag(id);
         }
@@ -216,11 +212,11 @@ public class DropActivity extends AppCompatActivity {
                     //handle the dragged view being dropped over a target view
                     view.setEnabled(false);
                     //view dragged item is being dropped on
-                    final TextView dropTarget = (TextView) v;
+                    final RoundedImageView dropTarget = v;
                     //if an item has already been dropped here, there will be a tag
                     final Object tag = dropTarget.getTag();
                     //view being dragged and dropped
-                    final TextView dropped = (TextView) view;
+                    final View dropped = (View) view;
                     //update the text in the target view to reflect the data being dropped
                     if (tag!= null )
                     {

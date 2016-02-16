@@ -3,12 +3,13 @@
                android:layout_width="match_parent"
                android:layout_height="match_parent"
                android:orientation="horizontal"
-               android:weightSum = "4">
+               android:baselineAligned="false">
 
     <LinearLayout
         android:layout_width="wrap_content"
+        android:background="#C3C3C3"
         android:layout_height="match_parent"
-        android:layout_weight="1.25">
+        android:layout_weight="1">
         <ScrollView
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
@@ -26,26 +27,10 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                   android:layout_width="wrap_content"
                   android:layout_height="match_parent"
-                  android:layout_weight="1.5"
+                  android:layout_weight="2"
                   android:orientation="vertical"
                   android:id="@+id/lineupLinearLayout">
+
+
     </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_weight="1.25">
-        <ScrollView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent">
-            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                          android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:orientation="vertical"
-
-                          android:id="@+id/rightBracketLinearLayout">
-            </LinearLayout>
-        </ScrollView>
-    </LinearLayout>
-
 </LinearLayout>
