@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.content.ClipData;
 import android.view.Display;
 import android.view.DragEvent;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -86,6 +87,7 @@ public class DropActivity extends AppCompatActivity {
             LinearLayout[] viewAthletes = new LinearLayout[athleteArr.length];
             LayoutInflater inflater = LayoutInflater.from(this);
             LinearLayout profile = (LinearLayout)inflater.inflate(R.layout.bubble_profile, null);
+            profile.setOrientation(LinearLayout.VERTICAL);
             RoundedImageView profile_circle = (RoundedImageView) profile.findViewById(R.id.athlete_image_view);
             TextView profile_text = (TextView) profile.findViewById (R.id.athlete_text_view);
             profile_text.setText(athleteArr[i].getName());
@@ -104,18 +106,24 @@ public class DropActivity extends AppCompatActivity {
     {
         LinearLayout layout = (LinearLayout) findViewById(R.id.lineupLinearLayout);
 
-
         layout.setScrollContainer(true);
-        int diameter = ((height-(height/100*14))/(boatSize+1));//14% higher than the lowest point to avoid statusbar
+        int effectiveHeight = height-(height/100*14);//14% higher than the lowest point to avoid statusbar
+        int margin = (effectiveHeight/100);//1% margin
+        int diameter = (effectiveHeight/boatSize)-(2*margin);
         LinearLayout.LayoutParams dynamicParams = new LinearLayout.LayoutParams(diameter,diameter);
 
-        for (int i = boatSize; i > 0; i--)
+        for (int i = boatSize; i >= 0; i--)
         {
             LayoutInflater inflater = LayoutInflater.from(this);
             LinearLayout profile = (LinearLayout)inflater.inflate(R.layout.bubble_profile, null);
             RoundedImageView profile_circle = (RoundedImageView) profile.findViewById(R.id.athlete_image_view);
             TextView profile_text = (TextView) profile.findViewById (R.id.athlete_text_view);
-            profile_text.setText("Athlete"+i);
+            LinearLayout.LayoutParams layParams = new LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            layParams.setMargins(0, margin,0, margin);
+            profile.setLayoutParams(layParams);
+            profile.setGravity(Gravity.CENTER_HORIZONTAL);
+            profile_text.setText("Athlete"+i);//TODO set to sport of coach
             profile_circle.setLayoutParams(dynamicParams);
             profile.setOnDragListener(new ChoiceDragListener());
             layout.addView(profile);
@@ -158,7 +166,6 @@ public class DropActivity extends AppCompatActivity {
 
             profile_circle.setBorderColor(Color.GREEN);
             Integer id = dropped.getId();
-
             dropTargetView.setTag(id);
         }
 
