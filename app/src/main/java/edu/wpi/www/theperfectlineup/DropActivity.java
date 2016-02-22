@@ -3,7 +3,6 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -18,8 +17,6 @@ import android.view.View.DragShadowBuilder;
 import android.view.View.OnDragListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.widget.GridLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.LinearLayout;
 import com.makeramen.roundedimageview.RoundedImageView;
@@ -55,8 +52,8 @@ public class DropActivity extends AppCompatActivity {
         int width = size.x;//Width of display
         int height = size.y;//height of display
         LinearLayout layout1 = (LinearLayout) findViewById(R.id.leftBracketLinearLayout);
-        addAthletes(layout1, mAthletesLeft,width);
-        addBoat(width, height, 8);//TODO will have to get the boatSize from the chosen boat
+        addAthletes(layout1, mAthletesLeft);
+        addBoat(height, 8);//TODO will have to get the boatSize from the chosen boat
     }
 
     public void alertUser (String title,String msg, final Runnable ifTrue, final Runnable ifFalse) {
@@ -83,20 +80,18 @@ public class DropActivity extends AppCompatActivity {
 // It takes in a viewGroup we want to attach to and an array of athletes
 
 
-    public void addAthletes(ViewGroup view, Athlete[] athleteArr, int width) {
+    public void addAthletes(ViewGroup view, Athlete[] athleteArr) {
         view.setScrollContainer(true);
         for (int i = 0; i < athleteArr.length; i++) {
-            RoundedImageView[] viewAthletes = new RoundedImageView[athleteArr.length];  //TODO add textView to portrower obj
-            RoundedImageView dropTarget = new RoundedImageView(this);
-            dropTarget.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            dropTarget.setCornerRadius((float) 10);
-            dropTarget.setBorderWidth((float) 2);
-            dropTarget.setBorderColor(Color.DKGRAY);
-            dropTarget.mutateBackground(true);
-            Drawable drawable = ContextCompat.getDrawable(this, R.drawable.profile_image);
-            dropTarget.setImageDrawable(drawable);
-            dropTarget.setOval(true);
-            viewAthletes[i]= dropTarget;
+            LinearLayout[] viewAthletes = new LinearLayout[athleteArr.length];
+            LayoutInflater inflater = LayoutInflater.from(this);
+            LinearLayout profile = (LinearLayout)inflater.inflate(R.layout.bubble_profile, null);
+            RoundedImageView profile_circle = (RoundedImageView) profile.findViewById(R.id.athlete_image_view);
+            TextView profile_text = (TextView) profile.findViewById (R.id.athlete_text_view);
+            profile_text.setText(athleteArr[i].getName());
+            Drawable d = ResourcesCompat.getDrawable(getResources(), R.drawable.profile_image, null);
+            profile_circle.setImageDrawable(d);
+            viewAthletes[i]= profile;
             viewAthletes[i].setId(989023490 + i);//needed some unique tag for athletes.
             viewAthletes[i].setOnTouchListener(new ChoiceTouchListener());
             view.addView(viewAthletes[i]);
@@ -105,7 +100,7 @@ public class DropActivity extends AppCompatActivity {
 
 
 
-    public void addBoat(int width,int height, int boatSize)
+    public void addBoat(int height, int boatSize)
     {
         LinearLayout layout = (LinearLayout) findViewById(R.id.lineupLinearLayout);
 
@@ -113,27 +108,6 @@ public class DropActivity extends AppCompatActivity {
         layout.setScrollContainer(true);
         int diameter = ((height-(height/100*14))/(boatSize+1));//14% higher than the lowest point to avoid statusbar
         LinearLayout.LayoutParams dynamicParams = new LinearLayout.LayoutParams(diameter,diameter);
-        //Setting all the properties of the circle
-
-
-
-        //Setting up the GridView
-
-        //Setting up the RoundedImageView
-
-        //Setting up the TextView
-//        background.setLayoutParams(dynamicParams);
-//        athleteImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-//        athleteImageView.setCornerRadius((float) 10);
-//        athleteImageView.setBorderWidth((float) 2);
-//        athleteImageView.setBorderColor(Color.DKGRAY);
-//        athleteImageView.mutateBackground(true);
-//        athleteImageView.setBackgroundColor(Color.LTGRAY);
-//        athleteImageView.setOval(true);
-//        athleteImageView.setOnDragListener(new ChoiceDragListener());;
-//        athleteTextView.setText("Test");
-//        background.addView(athleteImageView);
-//        background.addView(athleteTextView);
 
         for (int i = boatSize; i > 0; i--)
         {
@@ -143,25 +117,7 @@ public class DropActivity extends AppCompatActivity {
             TextView profile_text = (TextView) profile.findViewById (R.id.athlete_text_view);
             profile_text.setText("Athlete"+i);
             profile_circle.setLayoutParams(dynamicParams);
-            profile_circle.setOnDragListener(new ChoiceDragListener());
-//            background = new RoundedImageView(this);
-//            background.setLayoutParams(dynamicParams);
-//            background.setScaleType(ImageView.ScaleType.CENTER_CROP);
-//            background.setCornerRadius((float) 10);
-//            background.setBorderWidth((float) 2);
-//            background.setBorderColor(Color.DKGRAY);
-//            background.mutateBackground(true);
-//            background.setBackgroundColor(Color.LTGRAY);
-//            background.setOval(true);
-//            background.setOnDragListener(new ChoiceDragListener());
-//            layout.addView(background);
-//            background = new TextView(this);
-//
-//               // name.setText("Rower" + i);//TODO should eventually reference the sport
-//                background.setBackgroundResource(R.drawable.profile_image);
-//                background.setLayoutParams(dynamicParams);
-//                background.setOnDragListener(new ChoiceDragListener());
-//             //   layout.addView(name);
+            profile.setOnDragListener(new ChoiceDragListener());
             layout.addView(profile);
 
         }
@@ -193,38 +149,16 @@ public class DropActivity extends AppCompatActivity {
         }
 
         private void setAthlete(View dropped, View dropTargetView){
-//            dropTarget.setText(dropped.getText());
-//            dropTarget.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
-//            //  String temp = dropped.getText().toString();
-//            // temp = temp.charAt(temp.length()-1);
-//            //  int temp2 = Integer.parseInt(temp);
-//            if(dropped.getMaxLines() == 2){
-//                dropTarget.setBackgroundResource(R.drawable.portrower);
-//            }
-//            else {
-//                dropTarget.setBackgroundResource(R.drawable.starboardrower);
-//            }
+            RoundedImageView profile_circle_dropTarget = (RoundedImageView) dropTargetView.findViewById (R.id.athlete_image_view);
+            TextView profile_name_dropTarget = (TextView) dropTargetView.findViewById(R.id.athlete_text_view);
+            RoundedImageView profile_circle = (RoundedImageView) dropped.findViewById(R.id.athlete_image_view);
+            TextView profile_name = (TextView) dropped.findViewById(R.id.athlete_text_view);
+            profile_circle_dropTarget.setImageDrawable(profile_circle.getDrawable());
+            profile_name_dropTarget.setText(profile_name.getText());
 
-            RoundedImageView profile_circle = (RoundedImageView) dropTargetView.findViewById (R.id.athlete_image_view);
-            //RoundedImageView dropTarget = (RoundedImageView) dropTargetView;
-            Drawable d = ResourcesCompat.getDrawable(getResources(), R.drawable.profile_image, null);
-            profile_circle.setImageDrawable(d);
-
-//            dropTarget.setScaleType(ImageView.ScaleType.CENTER_CROP);
-//            dropTarget.setCornerRadius((float) 10);
-//            dropTarget.setBorderWidth((float) 2);
             profile_circle.setBorderColor(Color.GREEN);
-
-//            dropTarget.mutateBackground(true);
-//            dropTarget.setOval(true);
-
-            //Display display = getWindowManager().getDefaultDisplay();
-            //int width = display.getWidth();
-           // dropTarget.setWidth((int) (width / 3 * .85));
-           // dropTarget.setHeight((int) (width / 3 * .85) / 2);
-            //make it bold to highlight the fact that an item has been dropped
-           // dropTarget.setTypeface(Typeface.DEFAULT_BOLD);
             Integer id = dropped.getId();
+
             dropTargetView.setTag(id);
         }
 
