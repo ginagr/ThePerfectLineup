@@ -11,6 +11,7 @@ import android.content.ClipData;
 import android.view.Display;
 import android.view.DragEvent;
 import android.view.Gravity;
+import android.widget.ImageView;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,7 +21,7 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.LinearLayout;
-import com.makeramen.roundedimageview.RoundedImageView;
+
 
 
 public class DropActivity extends AppCompatActivity {
@@ -88,7 +89,7 @@ public class DropActivity extends AppCompatActivity {
             LayoutInflater inflater = LayoutInflater.from(this);
             LinearLayout profile = (LinearLayout)inflater.inflate(R.layout.bubble_profile, null);
             profile.setOrientation(LinearLayout.VERTICAL);
-            RoundedImageView profile_circle = (RoundedImageView) profile.findViewById(R.id.athlete_image_view);
+            ImageView profile_circle = (ImageView) profile.findViewById(R.id.athlete_image_view);
             TextView profile_text = (TextView) profile.findViewById (R.id.athlete_text_view);
             profile_text.setText(athleteArr[i].getName());
             Drawable d = ResourcesCompat.getDrawable(getResources(), R.drawable.profile_image, null);
@@ -116,7 +117,7 @@ public class DropActivity extends AppCompatActivity {
         {
             LayoutInflater inflater = LayoutInflater.from(this);
             LinearLayout profile = (LinearLayout)inflater.inflate(R.layout.bubble_profile, null);
-            RoundedImageView profile_circle = (RoundedImageView) profile.findViewById(R.id.athlete_image_view);
+            ImageView profile_circle = (ImageView) profile.findViewById(R.id.athlete_image_view);
             TextView profile_text = (TextView) profile.findViewById (R.id.athlete_text_view);
             LinearLayout.LayoutParams layParams = new LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -157,14 +158,16 @@ public class DropActivity extends AppCompatActivity {
         }
 
         private void setAthlete(View dropped, View dropTargetView){
-            RoundedImageView profile_circle_dropTarget = (RoundedImageView) dropTargetView.findViewById (R.id.athlete_image_view);
+            ImageView profile_circle_dropTarget = (ImageView) dropTargetView.findViewById (R.id.athlete_image_view);
             TextView profile_name_dropTarget = (TextView) dropTargetView.findViewById(R.id.athlete_text_view);
-            RoundedImageView profile_circle = (RoundedImageView) dropped.findViewById(R.id.athlete_image_view);
+            ImageView profile_circle = (ImageView) dropped.findViewById(R.id.athlete_image_view);
             TextView profile_name = (TextView) dropped.findViewById(R.id.athlete_text_view);
+           // int profile_circle_color = profile_circle.getBorderColor();
+            //profile_circle_dropTarget.setBorderColor(Color.GREEN);
             profile_circle_dropTarget.setImageDrawable(profile_circle.getDrawable());
             profile_name_dropTarget.setText(profile_name.getText());
+           // profile_circle.setBorderColor(profile_circle_color);
 
-            profile_circle.setBorderColor(Color.GREEN);
             Integer id = dropped.getId();
             dropTargetView.setTag(id);
         }
