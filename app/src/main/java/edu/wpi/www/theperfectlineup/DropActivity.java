@@ -1,23 +1,28 @@
 package edu.wpi.www.theperfectlineup;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Point;
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.ClipData;
-import android.graphics.Typeface;
-import android.util.TypedValue;
 import android.view.Display;
 import android.view.DragEvent;
+import com.github.siyamed.shapeimageview.CircularImageView;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.DragShadowBuilder;
 import android.view.View.OnDragListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
+
 
 
 public class DropActivity extends AppCompatActivity {
@@ -29,7 +34,7 @@ public class DropActivity extends AppCompatActivity {
                 new Athlete("Athlete 2", 24),
                 new Athlete("Athlete 3", 21),
                 new Athlete("Athlete 4", 27),
-                new Athlete("Athlete 5", 18),
+                new Athlete("Tim 5", 18),
                 new Athlete("Athlete 6", 17),
                 new Athlete("Athlete 7", 15),
                 new Athlete("Athlete 8", 19),
@@ -38,35 +43,20 @@ public class DropActivity extends AppCompatActivity {
                 new Athlete("Athlete 11", 20),
                 new Athlete("Athlete 12", 22),
                 new Athlete("Athlete 13", 21),}; //TODO remove an dreplace with actual database. This is a mock
-    private Athlete[] mAthletesRight = new Athlete[]{
-            new Athlete("Athlete 14", 21),
-            new Athlete("Athlete 15", 24),
-            new Athlete("Athlete 16", 21),
-            new Athlete("Athlete 17", 27),
-            new Athlete("Athlete 18", 18),
-            new Athlete("Athlete 19", 17),
-            new Athlete("Athlete 20", 15),
-            new Athlete("Athlete 21", 19),
-            new Athlete("Athlete 22", 17),
-            new Athlete("Athlete 23", 17),
-            new Athlete("Athlete 24", 20),
-            new Athlete("Athlete 25", 22),
-            new Athlete("Athlete 26", 21),}; //TODO remove an dreplace with actual database. This is a mock
-
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drop);
-        Display display = getWindowManager().getDefaultDisplay();
-        int width = display.getWidth();//This is depereceated
+        Point size = new Point();
+        Display display = this.getWindowManager().getDefaultDisplay();
+        display.getSize(size);
+        int width = size.x;//Width of display
+        int height = size.y;//height of display
         LinearLayout layout1 = (LinearLayout) findViewById(R.id.leftBracketLinearLayout);
-        LinearLayout layout2 = (LinearLayout) findViewById(R.id.rightBracketLinearLayout);
-        addAthletes(layout1, mAthletesLeft,width);
-        addAthletes(layout2, mAthletesRight, width);
-        addBoat(width);
-        TextView temp = new TextView(this);
+        addAthletes(layout1, mAthletesLeft);
+        addBoat(height, 8);//TODO will have to get the boatSize from the chosen boat
     }
 
     public void alertUser (String title,String msg, final Runnable ifTrue, final Runnable ifFalse) {
@@ -93,18 +83,19 @@ public class DropActivity extends AppCompatActivity {
 // It takes in a viewGroup we want to attach to and an array of athletes
 
 
-    public void addAthletes(ViewGroup view, Athlete[] athleteArr, int width) {
+    public void addAthletes(ViewGroup view, Athlete[] athleteArr) {
         view.setScrollContainer(true);
-
         for (int i = 0; i < athleteArr.length; i++) {
-            TextView[] viewAthletes = new TextView[athleteArr.length];  //TODO add textView to portrower obj
-                        viewAthletes[i] = new TextView(this);     //TODO initialize in portrower object -> Why important
-            viewAthletes[i].setText(athleteArr[i].getFirstName());    //TODO change i to name attribute
-            viewAthletes[i].setBackgroundResource(R.drawable.portrower);// TODO should eventually be replaced by Icon that is usable in multiple sports
-            viewAthletes[i].setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
-            viewAthletes[i].setWidth((int) (width / 3 * .85));
-            viewAthletes[i].setHeight((int) (width / 3 * .85) / 2);
-            viewAthletes[i].setMaxLines(2);
+            LinearLayout[] viewAthletes = new LinearLayout[athleteArr.length];
+            LayoutInflater inflater = LayoutInflater.from(this);
+            LinearLayout profile = (LinearLayout)inflater.inflate(R.layout.bubble_profile, null);
+            profile.setOrientation(LinearLayout.VERTICAL);
+            CircularImageView profile_circle = (CircularImageView) profile.findViewById(R.id.athlete_image_view);
+            TextView profile_text = (TextView) profile.findViewById (R.id.athlete_text_view);
+            profile_text.setText(athleteArr[i].getFirstName()+athleteArr[i].getLastName());
+            Drawable d = ResourcesCompat.getDrawable(getResources(), R.drawable.profile_image, null);
+            profile_circle.setImageDrawable(d);
+            viewAthletes[i]= profile;
             viewAthletes[i].setId(989023490 + i);//needed some unique tag for athletes.
             viewAthletes[i].setOnTouchListener(new ChoiceTouchListener());
             view.addView(viewAthletes[i]);
@@ -113,38 +104,32 @@ public class DropActivity extends AppCompatActivity {
 
 
 
-    public void addBoat(int width)
+    public void addBoat(int height, int boatSize)
     {
-        LinearLayout layout = (LinearLayout)findViewById(R.id.lineupLinearLayout);
+        LinearLayout layout = (LinearLayout) findViewById(R.id.lineupLinearLayout);
+
         layout.setScrollContainer(true);
-        TextView temp = new TextView(this);
-        temp.setText("Cox");
-        temp.setTextSize(1, 35);
-        temp.setBackgroundResource(R.drawable.cox);
-        temp.setWidth((int) (width / 3 * .85));
-        temp.setHeight((int) (width / 3 * .85) / 2);
-        temp.setOnDragListener(new ChoiceDragListener());
-        layout.addView(temp);
-        for (int i = 8; i > 0; i--)
+        int effectiveHeight = height-(height/100*24);//14% higher than the lowest point to avoid statusbar
+        int margin = (effectiveHeight/100);//1% margin
+        int diameter = (effectiveHeight/boatSize)-(2*margin);
+        LinearLayout.LayoutParams dynamicParams = new LinearLayout.LayoutParams(diameter,diameter);
+
+        for (int i = boatSize; i >= 0; i--)
         {
-            temp = new TextView(this);
-            if (i % 2 != 0) {
-                temp.setText("" + i);
-                temp.setBackgroundResource(R.drawable.starboardrower_shadow);
-                temp.setWidth((int) (width / 3 * .85));
-                temp.setHeight((int) (width / 3 * .85) / 2);
-                temp.setTextSize(1, 35);
-                temp.setOnDragListener(new ChoiceDragListener());
-                layout.addView(temp);
-            } else {
-                temp.setText("" + i);
-                temp.setBackgroundResource(R.drawable.portrower_shadow);
-                temp.setWidth((int) (width / 3 * .85));
-                temp.setHeight((int) (width / 3 * .85) / 2);
-                temp.setTextSize(1, 35);
-                temp.setOnDragListener(new ChoiceDragListener());
-                layout.addView(temp);
-            }
+            LayoutInflater inflater = LayoutInflater.from(this);
+            LinearLayout profile = (LinearLayout)inflater.inflate(R.layout.bubble_profile, null);
+            CircularImageView profile_circle = (CircularImageView) profile.findViewById(R.id.athlete_image_view);
+            TextView profile_text = (TextView) profile.findViewById (R.id.athlete_text_view);
+            LinearLayout.LayoutParams layParams = new LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            layParams.setMargins(0, margin, 0, margin);
+            profile.setLayoutParams(layParams);
+            //profile.setGravity(Gravity.CENTER_HORIZONTAL);
+            profile_text.setText("Athlete "+i);//TODO set to sport of coach
+            profile_circle.setLayoutParams(dynamicParams);
+            profile.setOnDragListener(new ChoiceDragListener());
+            layout.addView(profile);
+
         }
     }
 
@@ -173,28 +158,18 @@ public class DropActivity extends AppCompatActivity {
             view.setEnabled(true);
         }
 
-        private void setAthlete(TextView dropped, TextView dropTarget){
-            dropTarget.setText(dropped.getText());
-            dropTarget.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
-            //  String temp = dropped.getText().toString();
-            // temp = temp.charAt(temp.length()-1);
-            //  int temp2 = Integer.parseInt(temp);
-            if(dropped.getMaxLines() == 2){
-                dropTarget.setBackgroundResource(R.drawable.portrower);
-            }
-            else {
-                dropTarget.setBackgroundResource(R.drawable.starboardrower);
-            }
+        private void setAthlete(View dropped, View dropTargetView){
+            CircularImageView profile_circle_dropTarget = (CircularImageView) dropTargetView.findViewById (R.id.athlete_image_view);
+            TextView profile_name_dropTarget = (TextView) dropTargetView.findViewById(R.id.athlete_text_view);
+            CircularImageView profile_circle = (CircularImageView) dropped.findViewById(R.id.athlete_image_view);
+            TextView profile_name = (TextView) dropped.findViewById(R.id.athlete_text_view);
+            profile_circle_dropTarget.setBorderColor(Color.GREEN);
+            //profile_circle_dropTarget.setBorderWidth(10);
+            profile_circle_dropTarget.setImageDrawable(profile_circle.getDrawable());
+            profile_name_dropTarget.setText(profile_name.getText());
 
-            Display display = getWindowManager().getDefaultDisplay();
-            int width = display.getWidth();
-            dropTarget.setWidth((int) (width / 3 * .85));
-            dropTarget.setHeight((int) (width / 3 * .85) / 2);
-            dropTarget.setPaddingRelative(0, 0, 0, 0);
-            //make it bold to highlight the fact that an item has been dropped
-            dropTarget.setTypeface(Typeface.DEFAULT_BOLD);
             Integer id = dropped.getId();
-            dropTarget.setTag(id);
+            dropTargetView.setTag(id);
         }
 
         @Override
@@ -217,11 +192,11 @@ public class DropActivity extends AppCompatActivity {
                     //handle the dragged view being dropped over a target view
                     view.setEnabled(false);
                     //view dragged item is being dropped on
-                    final TextView dropTarget = (TextView) v;
+                    final View dropTarget = v;
                     //if an item has already been dropped here, there will be a tag
                     final Object tag = dropTarget.getTag();
                     //view being dragged and dropped
-                    final TextView dropped = (TextView) view;
+                    final View dropped = (View) view;
                     //update the text in the target view to reflect the data being dropped
                     if (tag!= null )
                     {
