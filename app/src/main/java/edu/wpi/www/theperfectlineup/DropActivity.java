@@ -11,7 +11,7 @@ import android.content.ClipData;
 import android.view.Display;
 import android.view.DragEvent;
 import android.view.Gravity;
-import android.widget.ImageView;
+import com.github.siyamed.shapeimageview.CircularImageView;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,6 +19,7 @@ import android.view.View.DragShadowBuilder;
 import android.view.View.OnDragListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.LinearLayout;
 
@@ -33,7 +34,7 @@ public class DropActivity extends AppCompatActivity {
                 new Athlete("Athlete 2", 24),
                 new Athlete("Athlete 3", 21),
                 new Athlete("Athlete 4", 27),
-                new Athlete("Athlete 5", 18),
+                new Athlete("Tim 5", 18),
                 new Athlete("Athlete 6", 17),
                 new Athlete("Athlete 7", 15),
                 new Athlete("Athlete 8", 19),
@@ -89,7 +90,7 @@ public class DropActivity extends AppCompatActivity {
             LayoutInflater inflater = LayoutInflater.from(this);
             LinearLayout profile = (LinearLayout)inflater.inflate(R.layout.bubble_profile, null);
             profile.setOrientation(LinearLayout.VERTICAL);
-            ImageView profile_circle = (ImageView) profile.findViewById(R.id.athlete_image_view);
+            CircularImageView profile_circle = (CircularImageView) profile.findViewById(R.id.athlete_image_view);
             TextView profile_text = (TextView) profile.findViewById (R.id.athlete_text_view);
             profile_text.setText(athleteArr[i].getName());
             Drawable d = ResourcesCompat.getDrawable(getResources(), R.drawable.profile_image, null);
@@ -117,14 +118,14 @@ public class DropActivity extends AppCompatActivity {
         {
             LayoutInflater inflater = LayoutInflater.from(this);
             LinearLayout profile = (LinearLayout)inflater.inflate(R.layout.bubble_profile, null);
-            ImageView profile_circle = (ImageView) profile.findViewById(R.id.athlete_image_view);
+            CircularImageView profile_circle = (CircularImageView) profile.findViewById(R.id.athlete_image_view);
             TextView profile_text = (TextView) profile.findViewById (R.id.athlete_text_view);
             LinearLayout.LayoutParams layParams = new LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             layParams.setMargins(0, margin,0, margin);
             profile.setLayoutParams(layParams);
-            profile.setGravity(Gravity.CENTER_HORIZONTAL);
-            profile_text.setText("Athlete"+i);//TODO set to sport of coach
+            //profile.setGravity(Gravity.CENTER_HORIZONTAL);
+            profile_text.setText("Athlete "+i);//TODO set to sport of coach
             profile_circle.setLayoutParams(dynamicParams);
             profile.setOnDragListener(new ChoiceDragListener());
             layout.addView(profile);
@@ -158,15 +159,14 @@ public class DropActivity extends AppCompatActivity {
         }
 
         private void setAthlete(View dropped, View dropTargetView){
-            ImageView profile_circle_dropTarget = (ImageView) dropTargetView.findViewById (R.id.athlete_image_view);
+            CircularImageView profile_circle_dropTarget = (CircularImageView) dropTargetView.findViewById (R.id.athlete_image_view);
             TextView profile_name_dropTarget = (TextView) dropTargetView.findViewById(R.id.athlete_text_view);
-            ImageView profile_circle = (ImageView) dropped.findViewById(R.id.athlete_image_view);
+            CircularImageView profile_circle = (CircularImageView) dropped.findViewById(R.id.athlete_image_view);
             TextView profile_name = (TextView) dropped.findViewById(R.id.athlete_text_view);
-           // int profile_circle_color = profile_circle.getBorderColor();
-            //profile_circle_dropTarget.setBorderColor(Color.GREEN);
+            profile_circle_dropTarget.setBorderColor(Color.GREEN);
+            //profile_circle_dropTarget.setBorderWidth(10);
             profile_circle_dropTarget.setImageDrawable(profile_circle.getDrawable());
             profile_name_dropTarget.setText(profile_name.getText());
-           // profile_circle.setBorderColor(profile_circle_color);
 
             Integer id = dropped.getId();
             dropTargetView.setTag(id);
