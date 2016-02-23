@@ -70,4 +70,11 @@
         android:onClick="SubmitAthlete"
         android:nestedScrollingEnabled="true"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back"
+        android:id="@+id/back_button"
+        android:onClick="backToDrag"/>
+
 </LinearLayout>

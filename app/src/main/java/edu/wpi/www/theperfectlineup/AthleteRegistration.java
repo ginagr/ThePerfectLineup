@@ -213,4 +213,9 @@ public class AthleteRegistration extends AppCompatActivity {
 
         return false;
     }
+
+    public void backToDrag(View view){
+        Intent i = new Intent(AthleteRegistration.this, DropActivity.class);
+        startActivity(i);
+    }
 }
