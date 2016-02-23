@@ -1,5 +1,6 @@
 package edu.wpi.www.theperfectlineup;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -98,7 +99,7 @@ public class DropActivity extends AppCompatActivity {
         for (int i = 0; i < athleteArr.length; i++) {
             TextView[] viewAthletes = new TextView[athleteArr.length];  //TODO add textView to portrower obj
                         viewAthletes[i] = new TextView(this);     //TODO initialize in portrower object -> Why important
-            viewAthletes[i].setText(athleteArr[i].getName());    //TODO change i to name attribute
+            viewAthletes[i].setText(athleteArr[i].getFirstName());    //TODO change i to name attribute
             viewAthletes[i].setBackgroundResource(R.drawable.portrower);// TODO should eventually be replaced by Icon that is usable in multiple sports
             viewAthletes[i].setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
             viewAthletes[i].setWidth((int) (width / 3 * .85));
@@ -259,6 +260,11 @@ public class DropActivity extends AppCompatActivity {
 
             return true;
         }
+    }
+
+    public void switchToReg(View view){
+        Intent i = new Intent(DropActivity.this, AthleteRegistration.class);
+        startActivity(i);
     }
 
 }
