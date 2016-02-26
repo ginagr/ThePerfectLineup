@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
@@ -17,6 +19,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 
+import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,10 +32,10 @@ import edu.wpi.www.theperfectlineup.database.AthleteDbSchema.AthleteTable;
 /**
  * Created by Gina on 2/19/16.
  */
-public class AthleteRegistration extends AppCompatActivity {
+public class AthleteRegistration extends AppCompatActivity implements Parcelable {
     String TAG = AthleteRegistration.class.getSimpleName();
 
-    private Context mContext;
+    private Context mContext = this;
     private SQLiteDatabase mDatabase;
 
     EditText firstNameEdit;
@@ -48,10 +52,26 @@ public class AthleteRegistration extends AppCompatActivity {
     public static int sYearsPlayed;
 
     public static Athlete newAthlete;
+    private static final String EXTRA_ARRAY_LIST = "the.perfect.lineup.array.list";
 
-    public AthleteRegistration(){
-
+    public AthleteRegistration() {
     }
+
+    protected AthleteRegistration(Parcel in) {
+        TAG = in.readString();
+    }
+
+    public static final Creator<AthleteRegistration> CREATOR = new Creator<AthleteRegistration>() {
+        @Override
+        public AthleteRegistration createFromParcel(Parcel in) {
+            return new AthleteRegistration(in);
+        }
+
+        @Override
+        public AthleteRegistration[] newArray(int size) {
+            return new AthleteRegistration[size];
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,45 +90,47 @@ public class AthleteRegistration extends AppCompatActivity {
 //        AthleteRegistration.get(getActivity()).updateAthlete(newAthlete);
 //    }
 
-    private AthleteRegistration(Context context){
+    private AthleteRegistration(Context context) {
         mContext = context.getApplicationContext();
         mDatabase = new AthleteBaseHelper(mContext).getWritableDatabase();
     }
 
     public void onRadioButtonClicked(View view) {
         boolean checked = ((RadioButton) view).isChecked();
-        switch(view.getId()) {
+        switch (view.getId()) {
             case R.id.StarboardRadio:
                 if (checked)
                     sPosition = 3;
-                    break;
+                break;
             case R.id.PortRadio:
                 if (checked)
                     sPosition = 2;
-                    break;
+                break;
             case R.id.CoxwainRadio:
                 if (checked)
                     sPosition = 1;
-                    break;
+                break;
         }
 
     }
 
-    public void addAthlete(Athlete athlete)
-    {
+    public void addAthlete(Athlete athlete) {
         ContentValues values = getContentValues(athlete);
-        Log.d(TAG, "Position: " + newAthlete.getPosition());
         mDatabase.insert(AthleteTable.NAME, null, values);
     }
 
-    public List<Athlete> getAthlete() {
-        List<Athlete> athletes = new ArrayList<>();
+    public ArrayList<Athlete> getAthletes(){
+        Context context = this;
+        mContext = context.getApplicationContext();
+        mDatabase = new AthleteBaseHelper(mContext).getWritableDatabase();
+
+        ArrayList<Athlete> athletes = new ArrayList<>();
 
         AthleteCursorWrapper cursor = queryAthletes(null, null);
 
-        try{
+        try {
             cursor.moveToFirst();
-            while(!cursor.isAfterLast()) {
+            while (!cursor.isAfterLast()) {
                 athletes.add(cursor.getAthlete());
                 cursor.moveToNext();
             }
@@ -119,7 +141,11 @@ public class AthleteRegistration extends AppCompatActivity {
         return athletes;
     }
 
-    public Athlete getAthlete(String id){
+    private Context getContext() {
+        return this;
+    }
+
+    public Athlete getAthlete(String id) {
         AthleteCursorWrapper cursor = queryAthletes(AthleteTable.Cols.ID +
                 " = ?", new String[]{id});
 
@@ -134,7 +160,7 @@ public class AthleteRegistration extends AppCompatActivity {
         }
     }
 
-    public void updateAthlete(Athlete athlete){
+    public void updateAthlete(Athlete athlete) {
         String athleteID = athlete.getID();
         ContentValues values = getContentValues(athlete);
 
@@ -142,7 +168,7 @@ public class AthleteRegistration extends AppCompatActivity {
                 " = ? ", new String[]{athleteID});
     }
 
-    private static ContentValues getContentValues(Athlete athlete){
+    private static ContentValues getContentValues(Athlete athlete) {
         ContentValues values = new ContentValues();
         values.put(AthleteTable.Cols.ID, athlete.getLastName() + athlete.getFirstName());
         values.put(AthleteTable.Cols.FIRSTNAME, athlete.getFirstName());
@@ -154,12 +180,12 @@ public class AthleteRegistration extends AppCompatActivity {
         return values;
     }
 
-    private AthleteCursorWrapper queryAthletes(String whereClause, String[]whereArgs){
+    private AthleteCursorWrapper queryAthletes(String whereClause, String[] whereArgs) {
         Cursor cursor = mDatabase.query(AthleteTable.NAME, null, whereClause, whereArgs, null, null, null);
         return new AthleteCursorWrapper(cursor);
     }
 
-    public void SubmitAthlete(View view){
+    public void SubmitAthlete(View view) {
         firstNameEdit = (EditText) findViewById(R.id.FirstNameText);
         lastNameEdit = (EditText) findViewById(R.id.LastNameText);
         ageEdit = (EditText) findViewById(R.id.AgeText);
@@ -169,7 +195,7 @@ public class AthleteRegistration extends AppCompatActivity {
 
         boolean check = checkIfEmpty();
 
-        if(!check) {
+        if (!check) {
             id = sLastName + sFirstName;
 
             newAthlete = new Athlete(sFirstName, sLastName, sPosition, sAge, sYearsPlayed);
@@ -184,38 +210,60 @@ public class AthleteRegistration extends AppCompatActivity {
         }
     }
 
-    public boolean checkIfEmpty(){
+    public boolean checkIfEmpty() {
 
-        if(firstNameEdit.getText().toString().trim().equals("")) { Toast.makeText(getApplicationContext(), "First name is empty", Toast.LENGTH_SHORT).show(); return true;}
-        else { sFirstName = firstNameEdit.getText().toString(); }
+        if (firstNameEdit.getText().toString().trim().equals("")) {
+            Toast.makeText(getApplicationContext(), "First name is empty", Toast.LENGTH_SHORT).show();
+            return true;
+        } else {
+            sFirstName = firstNameEdit.getText().toString();
+        }
 
-        if(lastNameEdit.getText().toString().trim().equals("")) { Toast.makeText(getApplicationContext(), "Last name is empty", Toast.LENGTH_SHORT).show(); return true;}
-        else { sLastName = lastNameEdit.getText().toString(); }
+        if (lastNameEdit.getText().toString().trim().equals("")) {
+            Toast.makeText(getApplicationContext(), "Last name is empty", Toast.LENGTH_SHORT).show();
+            return true;
+        } else {
+            sLastName = lastNameEdit.getText().toString();
+        }
 
-        if (ageEdit.getText().toString().trim().equals("")) { Toast.makeText(getApplicationContext(), "Age is empty", Toast.LENGTH_SHORT).show(); return true;}
-        else {
-            try{
+        if (ageEdit.getText().toString().trim().equals("")) {
+            Toast.makeText(getApplicationContext(), "Age is empty", Toast.LENGTH_SHORT).show();
+            return true;
+        } else {
+            try {
                 sAge = Integer.parseInt(ageEdit.getText().toString());
             } catch (NumberFormatException e) {
                 Toast.makeText(getApplicationContext(), "Please enter a valid number", Toast.LENGTH_SHORT).show();
             }
         }
 
-        if(yearsPlayedEdit.getText().toString().trim().equals("")) { Toast.makeText(getApplicationContext(), "Years played is empty", Toast.LENGTH_SHORT).show(); return true;}
-        else {
-            try{
+        if (yearsPlayedEdit.getText().toString().trim().equals("")) {
+            Toast.makeText(getApplicationContext(), "Years played is empty", Toast.LENGTH_SHORT).show();
+            return true;
+        } else {
+            try {
                 sYearsPlayed = Integer.parseInt(yearsPlayedEdit.getText().toString());
             } catch (NumberFormatException e) {
                 Toast.makeText(getApplicationContext(), "Please enter a valid number", Toast.LENGTH_SHORT).show();
             }
         }
-        if(sPosition == 0) { Toast.makeText(getApplicationContext(), "Position is empty", Toast.LENGTH_SHORT).show(); return true;}
-
+        if (radioGroup.getCheckedRadioButtonId() == -1) {
+            Toast.makeText(getApplicationContext(), "Position is empty", Toast.LENGTH_SHORT).show();
+            return true;
+        }
         return false;
     }
 
-    public void backToDrag(View view){
+    public void backToDrag(View view) {
+
         Intent i = new Intent(AthleteRegistration.this, DropActivity.class);
+        ArrayList<Athlete> ath = getAthletes();
+        Log.d(TAG, "Num of Athletes: " + ath.size());
+        i.putParcelableArrayListExtra(EXTRA_ARRAY_LIST, ath);
         startActivity(i);
     }
+    @Override
+    public int describeContents() { return 0; }
+    @Override
+    public void writeToParcel(Parcel dest, int flags) { dest.writeString(TAG);}
 }

@@ -4,11 +4,14 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.ClipData;
+import android.util.Log;
 import android.view.Display;
 import android.view.DragEvent;
 import com.github.siyamed.shapeimageview.CircularImageView;
@@ -19,31 +22,20 @@ import android.view.View.DragShadowBuilder;
 import android.view.View.OnDragListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.LinearLayout;
 
+import java.util.ArrayList;
+import java.util.List;
 
 
-public class DropActivity extends AppCompatActivity {
+public class DropActivity extends AppCompatActivity implements Parcelable{
+    String TAG = DropActivity.class.getSimpleName();
+    private static final String EXTRA_ARRAY_LIST = "the.perfect.lineup.array.list";
 
     private User mUser = new User("Rowing");//TODO this is a mock user with rowing.
 
-    private Athlete[] mAthletesLeft = new Athlete[]{
-        new Athlete("Athlete 1", 21),
-                new Athlete("Athlete 2", 24),
-                new Athlete("Athlete 3", 21),
-                new Athlete("Athlete 4", 27),
-                new Athlete("Tim 5", 18),
-                new Athlete("Athlete 6", 17),
-                new Athlete("Athlete 7", 15),
-                new Athlete("Athlete 8", 19),
-                new Athlete("Athlete 9", 17),
-                new Athlete("Athlete 10", 17),
-                new Athlete("Athlete 11", 20),
-                new Athlete("Athlete 12", 22),
-                new Athlete("Athlete 13", 21),}; //TODO remove an dreplace with actual database. This is a mock
-
+    private List<Athlete> mAthletesLeft = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +47,18 @@ public class DropActivity extends AppCompatActivity {
         int width = size.x;//Width of display
         int height = size.y;//height of display
         LinearLayout layout1 = (LinearLayout) findViewById(R.id.leftBracketLinearLayout);
-        addAthletes(layout1, mAthletesLeft);
+
+        try{
+            mAthletesLeft =  getIntent().getParcelableArrayListExtra(EXTRA_ARRAY_LIST);
+            addAthletes(layout1, mAthletesLeft);
+            Log.d(TAG, "Get athletes successful");
+
+        }
+        catch(Exception e){
+            Log.d(TAG, "There are no athletes to show");
+            mAthletesLeft = new ArrayList<>();
+            addAthletes(layout1, mAthletesLeft);
+        }
         addBoat(height, 8);//TODO will have to get the boatSize from the chosen boat
     }
 
@@ -83,19 +86,19 @@ public class DropActivity extends AppCompatActivity {
 // It takes in a viewGroup we want to attach to and an array of athletes
 
 
-    public void addAthletes(ViewGroup view, Athlete[] athleteArr) {
+    public void addAthletes(ViewGroup view, List<Athlete> athleteArr) {
         view.setScrollContainer(true);
-        for (int i = 0; i < athleteArr.length; i++) {
-            LinearLayout[] viewAthletes = new LinearLayout[athleteArr.length];
+        for (int i = 0; i < athleteArr.size(); i++) {
+            LinearLayout[] viewAthletes = new LinearLayout[athleteArr.size()];
             LayoutInflater inflater = LayoutInflater.from(this);
-            LinearLayout profile = (LinearLayout)inflater.inflate(R.layout.bubble_profile, null);
+            LinearLayout profile = (LinearLayout) inflater.inflate(R.layout.bubble_profile, null);
             profile.setOrientation(LinearLayout.VERTICAL);
             CircularImageView profile_circle = (CircularImageView) profile.findViewById(R.id.athlete_image_view);
-            TextView profile_text = (TextView) profile.findViewById (R.id.athlete_text_view);
-            profile_text.setText(athleteArr[i].getFirstName()+athleteArr[i].getLastName());
+            TextView profile_text = (TextView) profile.findViewById(R.id.athlete_text_view);
+            profile_text.setText(athleteArr.get(i).getFirstName() + athleteArr.get(i).getLastName());
             Drawable d = ResourcesCompat.getDrawable(getResources(), R.drawable.profile_image, null);
             profile_circle.setImageDrawable(d);
-            viewAthletes[i]= profile;
+            viewAthletes[i] = profile;
             viewAthletes[i].setId(989023490 + i);//needed some unique tag for athletes.
             viewAthletes[i].setOnTouchListener(new ChoiceTouchListener());
             view.addView(viewAthletes[i]);
@@ -131,6 +134,17 @@ public class DropActivity extends AppCompatActivity {
             layout.addView(profile);
 
         }
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(TAG);
+        dest.writeTypedList(mAthletesLeft);
     }
 
 
@@ -241,5 +255,18 @@ public class DropActivity extends AppCompatActivity {
         Intent i = new Intent(DropActivity.this, AthleteRegistration.class);
         startActivity(i);
     }
+
+    public DropActivity(){}
+
+    protected DropActivity(Parcel in) {
+        TAG = in.readString();
+        mAthletesLeft = in.createTypedArrayList(Athlete.CREATOR);
+    }
+    public static final Creator<DropActivity> CREATOR = new Creator<DropActivity>() {
+        @Override
+        public DropActivity createFromParcel(Parcel in) { return new DropActivity(in); }
+        @Override
+        public DropActivity[] newArray(int size)  { return new DropActivity[size]; }
+    };
 
 }
