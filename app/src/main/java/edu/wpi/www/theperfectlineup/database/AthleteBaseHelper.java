@@ -26,7 +26,11 @@ public class AthleteBaseHelper extends SQLiteOpenHelper{
             AthleteTable.Cols.LASTNAME + ", " +
             AthleteTable.Cols.POSITION + ", " +
             AthleteTable.Cols.AGE + ", " +
-            AthleteTable.Cols.YEARSPLAYED + ")"
+            AthleteTable.Cols.YEARSPLAYED + "," +
+            AthleteTable.Cols.FEET + ", " +
+            AthleteTable.Cols.INCHES + ", " +
+            AthleteTable.Cols.WEIGHT + ", " +
+            AthleteTable.Cols.TWOK + ")"
             );
     }
 

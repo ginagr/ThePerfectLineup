@@ -16,6 +16,10 @@ public class Athlete implements Parcelable{
     private   int age;
     private   int yearsPlayed;
     private   String  id; // last name + first name
+    private   int feet;
+    private   int inches;
+    private   int weight;
+    private   int twok;
 
     public Athlete(String firstName, String lastName, int position, int age, int yearsPlayed) {
         this.firstName = firstName;
@@ -24,11 +28,24 @@ public class Athlete implements Parcelable{
         this.age = age;
         this.yearsPlayed = yearsPlayed;
         id = lastName + firstName;
+        this.feet = 0;
+        this.inches = 0;
+        this.weight = 0;
+        this.twok = 0;
     }
 
-    public Athlete(String firstName, int age){
+    public Athlete(String firstName, String lastName, int position, int age, int yearsPlayed
+    , int feet, int inches, int weight, int twok) {
         this.firstName = firstName;
+        this.lastName = lastName;
+        this.position = position;
         this.age = age;
+        this.yearsPlayed = yearsPlayed;
+        this.feet = feet;
+        this.inches = inches;
+        this.weight = weight;
+        this.twok = twok;
+        id = lastName + firstName;
     }
 
     protected Athlete(Parcel in) {
@@ -64,6 +81,19 @@ public class Athlete implements Parcelable{
 
     public  String getID() { return id; }
 
+    public int getFeet() {return feet;}
+
+    public void setFeet(int feet) {this.feet = feet;}
+
+    public int getInches() {return inches;}
+
+    public void setInches(int inches) {this.inches = inches;}
+
+    public int getWeight() {return weight;}
+
+    public void setWeight(int weight) {this.weight = weight;}
+
+    public void setTwok(int twok) {this.twok = twok;}
 
     @Override
     public int describeContents() {
@@ -78,5 +108,9 @@ public class Athlete implements Parcelable{
         dest.writeInt(age);
         dest.writeInt(yearsPlayed);
         dest.writeString(id);
+    }
+
+    public int getTwok() {
+        return twok;
     }
 }

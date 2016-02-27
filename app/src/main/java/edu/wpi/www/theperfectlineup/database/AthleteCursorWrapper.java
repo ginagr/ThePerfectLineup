@@ -21,6 +21,10 @@ public class AthleteCursorWrapper extends CursorWrapper{
         int position = getInt(getColumnIndex(AthleteTable.Cols.POSITION));
         int age = getInt(getColumnIndex(AthleteTable.Cols.AGE));
         int yearsPlayed = getInt(getColumnIndex(AthleteTable.Cols.YEARSPLAYED));
+        int feet = getInt(getColumnIndex(AthleteTable.Cols.FEET));
+        int inches = getInt(getColumnIndex(AthleteTable.Cols.INCHES));
+        int weight = getInt(getColumnIndex(AthleteTable.Cols.WEIGHT));
+        int twok = getInt(getColumnIndex(AthleteTable.Cols.TWOK));
 
         Athlete athlete = new Athlete(firstName, lastName, position, age, yearsPlayed);
 

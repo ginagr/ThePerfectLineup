@@ -22,14 +22,23 @@ import android.view.View.DragShadowBuilder;
 import android.view.View.OnDragListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import android.widget.AdapterView.OnItemSelectedListener;
+
+import static android.view.ViewGroup.*;
+
 
 public class DropActivity extends AppCompatActivity implements Parcelable{
+
     String TAG = DropActivity.class.getSimpleName();
     private static final String EXTRA_ARRAY_LIST = "the.perfect.lineup.array.list";
 
@@ -88,24 +97,48 @@ public class DropActivity extends AppCompatActivity implements Parcelable{
 
     public void addAthletes(ViewGroup view, List<Athlete> athleteArr) {
         view.setScrollContainer(true);
+        LinearLayout[] viewAthletes = new LinearLayout[athleteArr.size()];
+        LayoutInflater inflater = LayoutInflater.from(this);
         for (int i = 0; i < athleteArr.size(); i++) {
-            LinearLayout[] viewAthletes = new LinearLayout[athleteArr.size()];
-            LayoutInflater inflater = LayoutInflater.from(this);
             LinearLayout profile = (LinearLayout) inflater.inflate(R.layout.bubble_profile, null);
             profile.setOrientation(LinearLayout.VERTICAL);
             CircularImageView profile_circle = (CircularImageView) profile.findViewById(R.id.athlete_image_view);
             TextView profile_text = (TextView) profile.findViewById(R.id.athlete_text_view);
-            profile_text.setText(athleteArr.get(i).getFirstName() + athleteArr.get(i).getLastName());
+
+           profile_text.setText("");
             Drawable d = ResourcesCompat.getDrawable(getResources(), R.drawable.profile_image, null);
             profile_circle.setImageDrawable(d);
             viewAthletes[i] = profile;
             viewAthletes[i].setId(989023490 + i);//needed some unique tag for athletes.
+
+            Spinner spinner = new Spinner(this);
+            spinner.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+
+            ArrayAdapter spinnerArrayAdapter = new ArrayAdapter<>
+                    (this, android.R.layout.simple_spinner_item, getStats(athleteArr.get(i)));
+            spinner.setAdapter(spinnerArrayAdapter);
+
+            viewAthletes[i].addView(spinner);
+
             viewAthletes[i].setOnTouchListener(new ChoiceTouchListener());
             view.addView(viewAthletes[i]);
         }
     }
 
+    public List<String> getStats(Athlete athlete){
+        List<String> categories = new ArrayList<>();
+        String name = athlete.getFirstName() + " " + athlete.getLastName();
+        String side = "Starboard";
+        categories.add(name);
+        if(athlete.getPosition() == 2) {side = "Port";}
+        categories.add("Side: " + side);
+        categories.add("2k: ");
+        categories.add("Height: ");
+        categories.add("Weight: ");
+        categories.add("Delete");
 
+        return categories;
+    }
 
     public void addBoat(int height, int boatSize)
     {

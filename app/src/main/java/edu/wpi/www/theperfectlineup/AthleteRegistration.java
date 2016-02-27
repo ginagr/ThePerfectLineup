@@ -11,22 +11,14 @@ import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.util.Log;
 import android.widget.Toast;
-
-
-import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
 
 import edu.wpi.www.theperfectlineup.database.AthleteBaseHelper;
 import edu.wpi.www.theperfectlineup.database.AthleteCursorWrapper;
-import edu.wpi.www.theperfectlineup.database.AthleteDbSchema;
 import edu.wpi.www.theperfectlineup.database.AthleteDbSchema.AthleteTable;
 
 /**
@@ -176,6 +168,10 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
         values.put(AthleteTable.Cols.POSITION, athlete.getPosition());
         values.put(AthleteTable.Cols.AGE, athlete.getAge());
         values.put(AthleteTable.Cols.YEARSPLAYED, athlete.getYearsPlayed());
+        values.put(AthleteTable.Cols.FEET, athlete.getFeet());
+        values.put(AthleteTable.Cols.INCHES, athlete.getInches());
+        values.put(AthleteTable.Cols.WEIGHT, athlete.getWeight());
+        values.put(AthleteTable.Cols.TWOK, athlete.getTwok());
 
         return values;
     }
@@ -262,6 +258,12 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
         i.putParcelableArrayListExtra(EXTRA_ARRAY_LIST, ath);
         startActivity(i);
     }
+
+    public void deleteAthlete(View view){
+
+
+    }
+
     @Override
     public int describeContents() { return 0; }
     @Override

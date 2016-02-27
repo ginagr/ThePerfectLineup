@@ -3,12 +3,14 @@
                android:layout_width="match_parent"
                android:layout_height="match_parent"
                android:orientation="horizontal"
-               android:baselineAligned="false">
+               android:baselineAligned="false"
+               android:weightSum="2">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:background="#C3C3C3"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_weight="1.15">
         <ScrollView
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
@@ -20,6 +22,7 @@
                           android:id="@+id/leftBracketLinearLayout">
             </LinearLayout>
         </ScrollView>
+
     </LinearLayout>
 
     <RelativeLayout
@@ -27,20 +30,21 @@
         android:layout_height="wrap_content"
         >
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                  android:layout_width="wrap_content"
-                  android:layout_height="match_parent"
-                  android:orientation="vertical"
-                  android:layout_centerInParent="true"
-                  android:id="@+id/lineupLinearLayout">
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                      android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:orientation="vertical"
+                      android:layout_centerInParent="true"
+                      android:id="@+id/lineupLinearLayout"
+                      android:layout_weight=".85">
 
-        <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add Athlete"
-            android:id="@+id/reg_button"
-            android:onClick="switchToReg"/>
-    </LinearLayout>
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Athlete"
+                android:id="@+id/reg_button"
+                android:onClick="switchToReg"/>
+        </LinearLayout>
     </RelativeLayout>
 </LinearLayout>

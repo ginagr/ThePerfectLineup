@@ -14,6 +14,11 @@ public class AthleteDbSchema {
             public static final String AGE = "age";
             public static final String YEARSPLAYED = "yearsPlayed";
             public static final String ID = "id";
+            public static final String FEET = "feet";
+            public static final String INCHES = "inches";
+            public static final String WEIGHT = "weight";
+            public static final String TWOK = "twok";
+
         }
     }
 }
