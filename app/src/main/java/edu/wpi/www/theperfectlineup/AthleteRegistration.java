@@ -188,7 +188,6 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
         yearsPlayedEdit = (EditText) findViewById(R.id.YearsPlayedText);
         radioGroup = (RadioGroup) findViewById(R.id.RadioGroup);
 
-
         boolean check = checkIfEmpty();
 
         if (!check) {

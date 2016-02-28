@@ -24,6 +24,7 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.LinearLayout;
@@ -37,7 +38,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import static android.view.ViewGroup.*;
 
 
-public class DropActivity extends AppCompatActivity implements Parcelable{
+public class DropActivity extends AppCompatActivity implements Parcelable, OnItemSelectedListener{
 
     String TAG = DropActivity.class.getSimpleName();
     private static final String EXTRA_ARRAY_LIST = "the.perfect.lineup.array.list";
@@ -113,7 +114,7 @@ public class DropActivity extends AppCompatActivity implements Parcelable{
 
             Spinner spinner = new Spinner(this);
             spinner.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-
+            spinner.setOnItemSelectedListener(this);
             ArrayAdapter spinnerArrayAdapter = new ArrayAdapter<>
                     (this, android.R.layout.simple_spinner_item, getStats(athleteArr.get(i)));
             spinner.setAdapter(spinnerArrayAdapter);
@@ -123,6 +124,46 @@ public class DropActivity extends AppCompatActivity implements Parcelable{
             viewAthletes[i].setOnTouchListener(new ChoiceTouchListener());
             view.addView(viewAthletes[i]);
         }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        int item = parent.getSelectedItemPosition();
+        // 1 = Side, 2 = 2k, 3 = Height, 4 = Weight, 5 = Delete
+        if(item == 1){ editStat("position", "Side"); }
+        if(item == 2){ editStat("twok", "2k"); }
+        if(item == 3){ editStat("height", "Height"); }
+        if(item == 4){ editStat("weight", "Weight"); }
+        if(item == 5){ deleteAthlete(); }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
+    public void editStat(String key, String stat){
+        final EditText newValue = new EditText(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Enter New " + stat);
+        builder.setView(newValue);
+        builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+               String value = newValue.getText().toString();
+                
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    public void deleteAthlete(){
+
     }
 
     public List<String> getStats(Athlete athlete){
@@ -179,7 +220,6 @@ public class DropActivity extends AppCompatActivity implements Parcelable{
         dest.writeString(TAG);
         dest.writeTypedList(mAthletesLeft);
     }
-
 
     private final class ChoiceTouchListener implements OnTouchListener {
 
