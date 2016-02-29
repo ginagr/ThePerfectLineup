@@ -3,9 +3,6 @@ package edu.wpi.www.theperfectlineup;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.io.Serializable;
-import java.sql.Time;
-
 /**
  * Created by Tim on 2/2/2016.
  */

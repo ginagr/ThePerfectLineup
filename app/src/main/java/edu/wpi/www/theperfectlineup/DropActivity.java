@@ -61,16 +61,16 @@ public class DropActivity extends AppCompatActivity implements Parcelable, OnIte
         int width = size.x;//Width of display
         int height = size.y;//height of display
         LinearLayout layout1 = (LinearLayout) findViewById(R.id.leftBracketLinearLayout);
-        try{
-            mAthletesLeft =  getIntent().getParcelableArrayListExtra(EXTRA_ARRAY_LIST);
-            addAthletes(layout1, mAthletesLeft);
-            Log.d(TAG, "Get athletes successful");
-        }
-        catch(Exception e){
-            Log.d(TAG, "There are no athletes to show");
-            mAthletesLeft = new ArrayList<>();
-            addAthletes(layout1, mAthletesLeft);
-        }
+            try{
+                mAthletesLeft =  getIntent().getParcelableArrayListExtra(EXTRA_ARRAY_LIST);
+                addAthletes(layout1, mAthletesLeft);
+                Log.d(TAG, "Get athletes successful");
+            }
+            catch(Exception e){
+                Log.d(TAG, "There are no athletes to show");
+                mAthletesLeft = new ArrayList<>();
+                addAthletes(layout1, mAthletesLeft);
+            }
         addBoat(height, 8);//TODO will have to get the boatSize from the chosen boat
     }
 
@@ -453,5 +453,4 @@ public class DropActivity extends AppCompatActivity implements Parcelable, OnIte
         @Override
         public DropActivity[] newArray(int size)  { return new DropActivity[size]; }
     };
-
 }

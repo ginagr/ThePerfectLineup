@@ -16,9 +16,7 @@ import android.widget.RadioGroup;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.sql.Time;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import edu.wpi.www.theperfectlineup.database.AthleteBaseHelper;
@@ -28,11 +26,13 @@ import edu.wpi.www.theperfectlineup.database.AthleteDbSchema.AthleteTable;
 /**
  * Created by Gina on 2/19/16.
  */
+
 public class AthleteRegistration extends AppCompatActivity implements Parcelable {
     String TAG = AthleteRegistration.class.getSimpleName();
 
-    private Context mContext = this;
-    private static SQLiteDatabase mDatabase;
+    protected static Context mContext;
+    protected static SQLiteDatabase mDatabase;
+    protected static Context context;
 
     EditText firstNameEdit;
     EditText lastNameEdit;
@@ -86,7 +86,7 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
         Context context = this;
         mContext = context.getApplicationContext();
         mDatabase = new AthleteBaseHelper(mContext).getWritableDatabase();
-
+        context = this;
     }
 
     //TODO: put in athlete fragment
@@ -146,10 +146,6 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
         return athletes;
     }
 
-    private Context getContext() {
-        return this;
-    }
-
     public static Athlete getAthlete(String id) throws ParseException {
         AthleteCursorWrapper cursor = queryAthletes(AthleteTable.Cols.ID +
                 " = ?", new String[]{id});
@@ -196,7 +192,7 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
         return values;
     }
 
-    private static AthleteCursorWrapper queryAthletes(String whereClause, String[] whereArgs) {
+    protected static AthleteCursorWrapper queryAthletes(String whereClause, String[] whereArgs) {
         Cursor cursor = mDatabase.query(AthleteTable.NAME, null, whereClause, whereArgs, null, null, null);
         return new AthleteCursorWrapper(cursor);
     }
