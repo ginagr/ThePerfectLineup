@@ -38,13 +38,6 @@
                       android:id="@+id/lineupLinearLayout"
                       android:layout_weight=".85">
 
-            <Button
-                style="?android:attr/buttonStyleSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Add Athlete"
-                android:id="@+id/reg_button"
-                android:onClick="switchToReg"/>
         </LinearLayout>
     </RelativeLayout>
 </LinearLayout>

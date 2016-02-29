@@ -16,6 +16,8 @@ import android.view.Display;
 import android.view.DragEvent;
 import com.github.siyamed.shapeimageview.CircularImageView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.DragShadowBuilder;
@@ -73,6 +75,25 @@ public class DropActivity extends AppCompatActivity implements Parcelable, OnIte
         }
         addBoat(height, 8);//TODO will have to get the boatSize from the chosen boat
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.add_athletes, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_add_athlete:
+                Intent i = new Intent(DropActivity.this, AthleteRegistration.class);
+                startActivity(i);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
     public void alertUser (String title,String msg, final Runnable ifTrue, final Runnable ifFalse) {
         final boolean mResult = false;//default as false
@@ -338,11 +359,6 @@ public class DropActivity extends AppCompatActivity implements Parcelable, OnIte
 
             return true;
         }
-    }
-
-    public void switchToReg(View view){
-        Intent i = new Intent(DropActivity.this, AthleteRegistration.class);
-        startActivity(i);
     }
 
     public DropActivity(){}

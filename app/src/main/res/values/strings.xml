@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ThePerfectLineup</string>
+    <string name="add_athlete">Add Athlete</string>
 </resources>
