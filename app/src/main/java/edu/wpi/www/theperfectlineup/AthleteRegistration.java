@@ -1,21 +1,28 @@
 package edu.wpi.www.theperfectlineup;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.io.File;
 import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -33,6 +40,7 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
 
     private Context mContext = this;
     private SQLiteDatabase mDatabase;
+    private ImageView mPhotoView;
 
     EditText firstNameEdit;
     EditText lastNameEdit;
@@ -59,6 +67,8 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
 
     public static Athlete newAthlete;
     private static final String EXTRA_ARRAY_LIST = "the.perfect.lineup.array.list";
+    private File mPhotoFile;
+    private static final int REQUEST_PHOTO = 2;
 
     public AthleteRegistration() {
     }
@@ -86,6 +96,21 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
         Context context = this;
         mContext = context.getApplicationContext();
         mDatabase = new AthleteBaseHelper(mContext).getWritableDatabase();
+        mPhotoView = (ImageView) findViewById(R.id.athlete_photo);
+        mPhotoFile = getPhotoFile(newAthlete);
+
+
+        final Intent captureImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        Uri uri = Uri.fromFile(mPhotoFile);
+        captureImage.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+
+        mPhotoView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(captureImage, REQUEST_PHOTO);
+            }
+        });
 
     }
 
@@ -95,11 +120,6 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
 //        super.onPause();
 //        AthleteRegistration.get(getActivity()).updateAthlete(newAthlete);
 //    }
-
-    private AthleteRegistration(Context context) {
-        mContext = context.getApplicationContext();
-        mDatabase = new AthleteBaseHelper(mContext).getWritableDatabase();
-    }
 
     public void onRadioButtonClicked(View view) {
         boolean checked = ((RadioButton) view).isChecked();
@@ -346,4 +366,16 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
     public int describeContents() { return 0; }
     @Override
     public void writeToParcel(Parcel dest, int flags) { dest.writeString(TAG);}
+
+
+
+    public File getPhotoFile (Athlete athlete) {
+        File externalFilesDir = this.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        if (externalFilesDir == null) {
+            return null;
+        }
+        return new File (externalFilesDir, athlete.getPhotoFilename());
+    }
+
+
 }

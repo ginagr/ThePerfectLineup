@@ -6,6 +6,18 @@
               android:id="@+id/mainLinLayout"
     >
 
+    <ImageView
+        android:id="@+id/athlete_photo"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:layout_margin="10dp"
+        android:scaleType="centerInside"
+        android:background="@android:color/darker_gray"
+        android:clickable="true"
+        >
+    </ImageView>
+
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"

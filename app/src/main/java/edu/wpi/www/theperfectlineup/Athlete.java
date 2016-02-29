@@ -53,6 +53,10 @@ public class Athlete implements Parcelable{
         id = in.readString();
     }
 
+    public String getPhotoFilename() {
+        return "IMG_"+ getID() + ".jpg";
+    }
+
     public static final Creator<Athlete> CREATOR = new Creator<Athlete>() {
         @Override
         public Athlete createFromParcel(Parcel in) {
@@ -116,5 +120,7 @@ public class Athlete implements Parcelable{
         dest.writeDouble(twokSec);
         dest.writeString(id);
     }
+
+
 
 }

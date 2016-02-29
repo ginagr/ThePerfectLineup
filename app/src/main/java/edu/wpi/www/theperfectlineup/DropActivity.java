@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
+import android.os.Environment;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.content.res.ResourcesCompat;
@@ -32,6 +33,7 @@ import android.widget.TextView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +50,8 @@ public class DropActivity extends AppCompatActivity implements Parcelable, OnIte
     private User mUser = new User("Rowing");//TODO this is a mock user with rowing.
 
     private List<Athlete> mAthletesLeft = new ArrayList<>();
+
+    private File mPhotoFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -223,7 +227,7 @@ public class DropActivity extends AppCompatActivity implements Parcelable, OnIte
             layParams.setMargins(0, margin, 0, margin);
             profile.setLayoutParams(layParams);
             //profile.setGravity(Gravity.CENTER_HORIZONTAL);
-            profile_text.setText("Athlete "+i);//TODO set to sport of coach
+            profile_text.setText("Athlete "+i+1);//TODO set to sport of coach
             profile_circle.setLayoutParams(dynamicParams);
             profile.setOnDragListener(new ChoiceDragListener());
             layout.addView(profile);
