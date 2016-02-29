@@ -1,4 +1,5 @@
 package edu.wpi.www.theperfectlineup;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -31,7 +32,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.LinearLayout;
-
 
 import java.text.ParseException;
 import java.util.ArrayList;

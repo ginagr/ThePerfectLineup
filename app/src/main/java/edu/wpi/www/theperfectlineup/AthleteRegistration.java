@@ -54,8 +54,8 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
     public static int sTwokMin;
     public static double sTwokSec;
     public static int sWeight;
-    public static int sInches;
     public static int sFeet;
+    public static int sInches;
 
     public static Athlete newAthlete;
     private static final String EXTRA_ARRAY_LIST = "the.perfect.lineup.array.list";
