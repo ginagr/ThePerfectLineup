@@ -32,7 +32,7 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
     String TAG = AthleteRegistration.class.getSimpleName();
 
     private Context mContext = this;
-    private SQLiteDatabase mDatabase;
+    private static SQLiteDatabase mDatabase;
 
     EditText firstNameEdit;
     EditText lastNameEdit;
@@ -150,7 +150,7 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
         return this;
     }
 
-    public Athlete getAthlete(String id) throws ParseException {
+    public static Athlete getAthlete(String id) throws ParseException {
         AthleteCursorWrapper cursor = queryAthletes(AthleteTable.Cols.ID +
                 " = ?", new String[]{id});
 
@@ -165,7 +165,7 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
         }
     }
 
-    public void updateAthlete(Athlete athlete) {
+    public static void updateAthlete(Athlete athlete) {
         String athleteID = athlete.getID();
         ContentValues values = getContentValues(athlete);
 
@@ -190,7 +190,7 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
         return values;
     }
 
-    private AthleteCursorWrapper queryAthletes(String whereClause, String[] whereArgs) {
+    private static AthleteCursorWrapper queryAthletes(String whereClause, String[] whereArgs) {
         Cursor cursor = mDatabase.query(AthleteTable.NAME, null, whereClause, whereArgs, null, null, null);
         return new AthleteCursorWrapper(cursor);
     }

@@ -30,12 +30,14 @@ import android.widget.TextView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
 import android.widget.AdapterView.OnItemSelectedListener;
 
 import static android.view.ViewGroup.*;
+import static edu.wpi.www.theperfectlineup.AthleteRegistration.getAthlete;
 
 
 public class DropActivity extends AppCompatActivity implements Parcelable, OnItemSelectedListener{
@@ -129,11 +131,15 @@ public class DropActivity extends AppCompatActivity implements Parcelable, OnIte
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         int item = parent.getSelectedItemPosition();
+        String user_id = parent.getItemAtPosition(0).toString();
+
+        String[] arr = user_id.split(" ");
+        String user = arr[1] + arr[0];
         // 1 = Side, 2 = 2k, 3 = Height, 4 = Weight, 5 = Delete
-        if(item == 1){ editStat("position", "Side"); }
-        if(item == 2){ editStat("twok", "2k"); }
-        if(item == 3){ editStat("height", "Height"); }
-        if(item == 4){ editStat("weight", "Weight"); }
+        //if(item == 1){ editStat("position", "Side"); }
+        if(item == 2){ editStat(parent, user, 2, "2k"); }
+        if(item == 3){ editStat(parent, user, 3, "Height"); }
+        if(item == 4){ editStat(parent, user, 4, "Weight"); }
         if(item == 5){ deleteAthlete(); }
     }
 
@@ -141,15 +147,25 @@ public class DropActivity extends AppCompatActivity implements Parcelable, OnIte
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
-
-    public void editStat(String key, String stat){
+    // 1 = Side, 2 = 2k, 3 = Height, 4 = Weight, 5 = Delete
+    public void editStat(final AdapterView<?> parent, final String user, final int key, String stat){
         final EditText newValue = new EditText(this);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Enter New " + stat);
         builder.setView(newValue);
-        builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+        AlertDialog.Builder ok = builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 String value = newValue.getText().toString();
+                try {
+                    Athlete athlete = getAthlete(user);
+                    if (key == 4) {
+                        int intValue = Integer.parseInt(value);
+                        athlete.setWeight(intValue);
+                        AthleteRegistration.updateAthlete(athlete);
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
