@@ -173,6 +173,12 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
                 " = ? ", new String[]{athleteID});
     }
 
+    public static void deleteAthlete(String id){
+    //    String athleteID = athlete.getID();
+        String whereClause = "_id" + "=?";
+        mDatabase.delete(AthleteTable.NAME, AthleteTable.Cols.ID + " = ?", new String[]{id});
+    }
+
     private static ContentValues getContentValues(Athlete athlete) {
         ContentValues values = new ContentValues();
         values.put(AthleteTable.Cols.ID, athlete.getLastName() + athlete.getFirstName());
@@ -337,9 +343,6 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
         Log.d(TAG, "Num of Athletes: " + ath.size());
         i.putParcelableArrayListExtra(EXTRA_ARRAY_LIST, ath);
         startActivity(i);
-    }
-
-    public void deleteAthlete(View view){
     }
 
     @Override

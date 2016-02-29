@@ -36,7 +36,7 @@ public class Athlete implements Parcelable{
         this.weight = weight;
         this.twokMin = twokMin;
         this.twokSec = twokSec;
-        id = lastName + firstName;
+        this.id = lastName + firstName;
     }
 
     protected Athlete(Parcel in) {

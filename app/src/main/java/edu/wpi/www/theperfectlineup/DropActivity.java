@@ -1,4 +1,5 @@
 package edu.wpi.www.theperfectlineup;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -30,7 +31,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
+
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -40,7 +41,6 @@ import android.widget.AdapterView.OnItemSelectedListener;
 
 import static android.view.ViewGroup.*;
 import static edu.wpi.www.theperfectlineup.AthleteRegistration.getAthlete;
-
 
 public class DropActivity extends AppCompatActivity implements Parcelable, OnItemSelectedListener{
 
@@ -61,12 +61,10 @@ public class DropActivity extends AppCompatActivity implements Parcelable, OnIte
         int width = size.x;//Width of display
         int height = size.y;//height of display
         LinearLayout layout1 = (LinearLayout) findViewById(R.id.leftBracketLinearLayout);
-
         try{
             mAthletesLeft =  getIntent().getParcelableArrayListExtra(EXTRA_ARRAY_LIST);
             addAthletes(layout1, mAthletesLeft);
             Log.d(TAG, "Get athletes successful");
-
         }
         catch(Exception e){
             Log.d(TAG, "There are no athletes to show");
@@ -79,7 +77,6 @@ public class DropActivity extends AppCompatActivity implements Parcelable, OnIte
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.add_athletes, menu);
-
         return true;
     }
 
@@ -102,7 +99,6 @@ public class DropActivity extends AppCompatActivity implements Parcelable, OnIte
                 .setMessage(msg)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-
                     public void onClick(DialogInterface dialog, int whichButton) {
                         ifTrue.run();
 
@@ -128,22 +124,18 @@ public class DropActivity extends AppCompatActivity implements Parcelable, OnIte
             profile.setOrientation(LinearLayout.VERTICAL);
             CircularImageView profile_circle = (CircularImageView) profile.findViewById(R.id.athlete_image_view);
             TextView profile_text = (TextView) profile.findViewById(R.id.athlete_text_view);
-
-           profile_text.setText("");
+            profile_text.setText("");
             Drawable d = ResourcesCompat.getDrawable(getResources(), R.drawable.profile_image, null);
             profile_circle.setImageDrawable(d);
             viewAthletes[i] = profile;
             viewAthletes[i].setId(989023490 + i);//needed some unique tag for athletes.
-
             Spinner spinner = new Spinner(this);
             spinner.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
             spinner.setOnItemSelectedListener(this);
             ArrayAdapter spinnerArrayAdapter = new ArrayAdapter<>
                     (this, android.R.layout.simple_spinner_item, getStats(athleteArr.get(i)));
             spinner.setAdapter(spinnerArrayAdapter);
-
             viewAthletes[i].addView(spinner);
-
             viewAthletes[i].setOnTouchListener(new ChoiceTouchListener());
             view.addView(viewAthletes[i]);
         }
@@ -153,23 +145,23 @@ public class DropActivity extends AppCompatActivity implements Parcelable, OnIte
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         int item = parent.getSelectedItemPosition();
         String user_id = parent.getItemAtPosition(0).toString();
-
         String[] arr = user_id.split(" ");
         String user = arr[1] + arr[0];
         // 1 = Side, 2 = 2k, 3 = Height, 4 = Weight, 5 = Delete
         //if(item == 1){ editStat("position", "Side"); }
-        if(item == 2){ editStat(parent, user, 2, "2k"); }
-        if(item == 3){ editStat(parent, user, 3, "Height"); }
-        if(item == 4){ editStat(parent, user, 4, "Weight"); }
-        if(item == 5){ deleteAthlete(); }
+        if(item == 2){ edit2k(parent, user, 2, "2k"); }
+        if(item == 3){ editHeight(parent, user, 3, "Height"); }
+        if(item == 4){ editWeight(parent, user, 4, "Weight"); }
+        if(item == 5){ deleteAthlete(parent, user, 5, "Delete"); }
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
+
     // 1 = Side, 2 = 2k, 3 = Height, 4 = Weight, 5 = Delete
-    public void editStat(final AdapterView<?> parent, final String user, final int key, String stat){
+    public void editWeight(final AdapterView<?> parent, final String user, final int key, String stat){
         final EditText newValue = new EditText(this);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Enter New " + stat);
@@ -179,11 +171,9 @@ public class DropActivity extends AppCompatActivity implements Parcelable, OnIte
                 String value = newValue.getText().toString();
                 try {
                     Athlete athlete = getAthlete(user);
-                    if (key == 4) {
                         int intValue = Integer.parseInt(value);
                         athlete.setWeight(intValue);
                         AthleteRegistration.updateAthlete(athlete);
-                    }
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -193,13 +183,100 @@ public class DropActivity extends AppCompatActivity implements Parcelable, OnIte
             public void onClick(DialogInterface dialog, int id) {
             }
         });
-
         AlertDialog dialog = builder.create();
         dialog.show();
     }
 
-    public void deleteAthlete(){
+    public void edit2k(final AdapterView<?> parent, final String user, final int key, String stat){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Enter New " + stat);
+        Context context = this;
+        LinearLayout layout = new LinearLayout(context);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        final EditText newMin = new EditText(this);
+        newMin.setHint("Minutes");
+        layout.addView(newMin);
+        final EditText newSec = new EditText(this);
+        newSec.setHint("Seconds");
+        layout.addView(newSec);
+        builder.setView(layout);
+        AlertDialog.Builder ok = builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                int minVal = Integer.parseInt(newMin.getText().toString());
+                double secVal = Double.parseDouble(newSec.getText().toString());
+                try {
+                    Athlete athlete = getAthlete(user);
+                        athlete.setTwokMin(minVal);
+                        athlete.setTwokSec(secVal);
+                        AthleteRegistration.updateAthlete(athlete);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
 
+    public void editHeight(final AdapterView<?> parent, final String user, final int key, String stat){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Enter New " + stat);
+        Context context = this;
+        LinearLayout layout = new LinearLayout(context);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        final EditText newFeet = new EditText(this);
+        newFeet.setHint("Feet");
+        layout.addView(newFeet);
+        final EditText newInch = new EditText(this);
+        newInch.setHint("Inches");
+        layout.addView(newInch);
+        builder.setView(layout);
+        AlertDialog.Builder ok = builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                int feetVal = Integer.parseInt(newFeet.getText().toString());
+                int inchVal = Integer.parseInt(newInch.getText().toString());
+                try {
+                    Athlete athlete = getAthlete(user);
+                    athlete.setFeet(feetVal);
+                    athlete.setInches(inchVal);
+                    AthleteRegistration.updateAthlete(athlete);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+
+    public void deleteAthlete(final AdapterView<?> parent, final String user, final int key, String stat){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Delete Athlete?");
+        AlertDialog.Builder ok = builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                try {
+                    Athlete athlete = getAthlete(user);
+                    AthleteRegistration.deleteAthlete(user);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     public List<String> getStats(Athlete athlete){
