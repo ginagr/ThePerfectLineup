@@ -124,7 +124,8 @@ public class DropActivity extends AppCompatActivity implements Parcelable, OnIte
             profile.setOrientation(LinearLayout.VERTICAL);
             CircularImageView profile_circle = (CircularImageView) profile.findViewById(R.id.athlete_image_view);
             TextView profile_text = (TextView) profile.findViewById(R.id.athlete_text_view);
-            profile_text.setText("");
+            profile_text.setText(athleteArr.get(i).getFirstName() + " " + athleteArr.get(i).getLastName());
+            profile_text.setVisibility(View.GONE);
             Drawable d = ResourcesCompat.getDrawable(getResources(), R.drawable.profile_image, null);
             profile_circle.setImageDrawable(d);
             viewAthletes[i] = profile;
@@ -148,7 +149,7 @@ public class DropActivity extends AppCompatActivity implements Parcelable, OnIte
         String[] arr = user_id.split(" ");
         String user = arr[1] + arr[0];
         // 1 = Side, 2 = 2k, 3 = Height, 4 = Weight, 5 = Delete
-        //if(item == 1){ editStat("position", "Side"); }
+        if(item == 1){ parent.setSelection(0); }
         if(item == 2){ edit2k(parent, user, 2, "2k"); }
         if(item == 3){ editHeight(parent, user, 3, "Height"); }
         if(item == 4){ editWeight(parent, user, 4, "Weight"); }
@@ -157,7 +158,6 @@ public class DropActivity extends AppCompatActivity implements Parcelable, OnIte
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-
     }
 
     // 1 = Side, 2 = 2k, 3 = Height, 4 = Weight, 5 = Delete
@@ -185,6 +185,7 @@ public class DropActivity extends AppCompatActivity implements Parcelable, OnIte
         });
         AlertDialog dialog = builder.create();
         dialog.show();
+        parent.setSelection(0);
     }
 
     public void edit2k(final AdapterView<?> parent, final String user, final int key, String stat){
@@ -220,6 +221,7 @@ public class DropActivity extends AppCompatActivity implements Parcelable, OnIte
         });
         AlertDialog dialog = builder.create();
         dialog.show();
+        parent.setSelection(0);
     }
 
     public void editHeight(final AdapterView<?> parent, final String user, final int key, String stat){
@@ -255,6 +257,7 @@ public class DropActivity extends AppCompatActivity implements Parcelable, OnIte
         });
         AlertDialog dialog = builder.create();
         dialog.show();
+        parent.setSelection(0);
     }
 
 
@@ -277,6 +280,7 @@ public class DropActivity extends AppCompatActivity implements Parcelable, OnIte
         });
         AlertDialog dialog = builder.create();
         dialog.show();
+        parent.setSelection(0);
     }
 
     public List<String> getStats(Athlete athlete){
@@ -368,7 +372,6 @@ public class DropActivity extends AppCompatActivity implements Parcelable, OnIte
             //profile_circle_dropTarget.setBorderWidth(10);
             profile_circle_dropTarget.setImageDrawable(profile_circle.getDrawable());
             profile_name_dropTarget.setText(profile_name.getText());
-
             Integer id = dropped.getId();
             dropTargetView.setTag(id);
         }
