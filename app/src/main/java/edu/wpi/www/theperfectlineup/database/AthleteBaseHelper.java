@@ -30,7 +30,8 @@ public class AthleteBaseHelper extends SQLiteOpenHelper{
             AthleteTable.Cols.FEET + ", " +
             AthleteTable.Cols.INCHES + ", " +
             AthleteTable.Cols.WEIGHT + ", " +
-            AthleteTable.Cols.TWOK + ")"
+            AthleteTable.Cols.TWOKMIN + ", " +
+            AthleteTable.Cols.TWOKSEC + ")"
             );
     }
 

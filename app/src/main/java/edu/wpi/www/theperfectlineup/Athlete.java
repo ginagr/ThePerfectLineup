@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.io.Serializable;
+import java.sql.Time;
 
 /**
  * Created by Tim on 2/2/2016.
@@ -19,23 +20,12 @@ public class Athlete implements Parcelable{
     private   int feet;
     private   int inches;
     private   int weight;
-    private   int twok;
+    private   int twokMin;
+    private   double twokSec;
 
-    public Athlete(String firstName, String lastName, int position, int age, int yearsPlayed) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.position = position;
-        this.age = age;
-        this.yearsPlayed = yearsPlayed;
-        id = lastName + firstName;
-        this.feet = 0;
-        this.inches = 0;
-        this.weight = 0;
-        this.twok = 0;
-    }
 
     public Athlete(String firstName, String lastName, int position, int age, int yearsPlayed
-    , int feet, int inches, int weight, int twok) {
+    , int feet, int inches, int weight, int twokMin, double twokSec) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.position = position;
@@ -44,7 +34,8 @@ public class Athlete implements Parcelable{
         this.feet = feet;
         this.inches = inches;
         this.weight = weight;
-        this.twok = twok;
+        this.twokMin = twokMin;
+        this.twokSec = twokSec;
         id = lastName + firstName;
     }
 
@@ -54,6 +45,11 @@ public class Athlete implements Parcelable{
         position = in.readInt();
         age = in.readInt();
         yearsPlayed = in.readInt();
+        feet = in.readInt();
+        inches = in.readInt();
+        weight = in.readInt();
+        twokMin = in.readInt();
+        twokSec = in.readDouble();
         id = in.readString();
     }
 
@@ -93,7 +89,13 @@ public class Athlete implements Parcelable{
 
     public void setWeight(int weight) {this.weight = weight;}
 
-    public void setTwok(int twok) {this.twok = twok;}
+    public void setTwokMin(int twokMin) {this.twokMin = twokMin;}
+
+    public void setTwokSec(double twokMin) {this.twokSec = twokSec;}
+
+    public int getTwokMin() { return twokMin; }
+
+    public double getTwokSec() { return twokSec; }
 
     @Override
     public int describeContents() {
@@ -107,10 +109,12 @@ public class Athlete implements Parcelable{
         dest.writeInt(position);
         dest.writeInt(age);
         dest.writeInt(yearsPlayed);
+        dest.writeInt(feet);
+        dest.writeInt(inches);
+        dest.writeInt(weight);
+        dest.writeInt(twokMin);
+        dest.writeDouble(twokSec);
         dest.writeString(id);
     }
 
-    public int getTwok() {
-        return twok;
-    }
 }

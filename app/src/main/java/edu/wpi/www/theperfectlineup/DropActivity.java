@@ -149,8 +149,7 @@ public class DropActivity extends AppCompatActivity implements Parcelable, OnIte
         builder.setView(newValue);
         builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-               String value = newValue.getText().toString();
-                
+                String value = newValue.getText().toString();
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -172,10 +171,11 @@ public class DropActivity extends AppCompatActivity implements Parcelable, OnIte
         String side = "Starboard";
         categories.add(name);
         if(athlete.getPosition() == 2) {side = "Port";}
+        if(athlete.getPosition() == 1) {side = "Coxswain";}
         categories.add("Side: " + side);
-        categories.add("2k: ");
-        categories.add("Height: ");
-        categories.add("Weight: ");
+        categories.add("2k: " + athlete.getTwokMin() + ":" + athlete.getTwokSec());
+        categories.add("Height: " + athlete.getFeet() + "\' " + athlete.getInches() + "\"");
+        categories.add("Weight: " + athlete.getWeight());
         categories.add("Delete");
 
         return categories;

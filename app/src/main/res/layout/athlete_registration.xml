@@ -6,18 +6,26 @@
               android:id="@+id/mainLinLayout"
     >
 
-    <EditText
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/FirstNameText"
-        android:hint="First Name"/>
+        android:weightSum="2">
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/LastNameText"
-        android:layout_gravity="center_horizontal"
-        android:hint="Last Name"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/FirstNameText"
+            android:layout_weight="1.25"
+            android:hint="First Name"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/LastNameText"
+            android:layout_weight=".75"
+            android:hint="Last Name"/>
+    </LinearLayout>
 
     <EditText
         android:layout_width="match_parent"
@@ -31,6 +39,68 @@
         android:layout_height="wrap_content"
         android:id="@+id/YearsPlayedText"
         android:hint="Years Played"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/WeightText"
+        android:hint="Weight"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" Height:"
+        android:id="@+id/textView2"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="2">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/FeetText"
+            android:layout_weight="1"
+            android:hint="Feet"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/InchesText"
+            android:layout_weight="1"
+            android:hint="Inches"/>
+
+    </LinearLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="  2k Time:"
+        android:id="@+id/textView"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="2">
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:id="@+id/TwoKMinText"
+        android:hint="Minutes"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:id="@+id/TwoKSecText"
+        android:hint="Seconds"/>
+    </LinearLayout>
 
     <RadioGroup
         android:layout_width="wrap_content"
@@ -62,19 +132,25 @@
             android:onClick="onRadioButtonClicked"/>
     </RadioGroup>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Submit "
-        android:id="@+id/submitButton"
-        android:onClick="SubmitAthlete"
-        android:nestedScrollingEnabled="true"/>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Back"
-        android:id="@+id/back_button"
-        android:onClick="backToDrag"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Back"
+            android:id="@+id/back_button"
+            android:onClick="backToDrag"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Submit "
+            android:id="@+id/submitButton"
+            android:onClick="SubmitAthlete"
+            android:nestedScrollingEnabled="true"/>
+    </LinearLayout>
 
 </LinearLayout>

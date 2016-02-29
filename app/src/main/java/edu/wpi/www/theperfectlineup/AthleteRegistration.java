@@ -15,6 +15,10 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.util.Log;
 import android.widget.Toast;
+
+import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import edu.wpi.www.theperfectlineup.database.AthleteBaseHelper;
@@ -34,6 +38,11 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
     EditText lastNameEdit;
     EditText ageEdit;
     EditText yearsPlayedEdit;
+    EditText twokMinEdit;
+    EditText twokSecEdit;
+    EditText weightEdit;
+    EditText feetEdit;
+    EditText inchesEdit;
     RadioGroup radioGroup;
 
     public static String id; //Last Name + First Name
@@ -42,6 +51,11 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
     public static int sPosition; //1 = Cox, 2 = Port, 3 = Starboard
     public static int sAge;
     public static int sYearsPlayed;
+    public static int sTwokMin;
+    public static double sTwokSec;
+    public static int sWeight;
+    public static int sInches;
+    public static int sFeet;
 
     public static Athlete newAthlete;
     private static final String EXTRA_ARRAY_LIST = "the.perfect.lineup.array.list";
@@ -111,7 +125,7 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
         mDatabase.insert(AthleteTable.NAME, null, values);
     }
 
-    public ArrayList<Athlete> getAthletes(){
+    public ArrayList<Athlete> getAthletes() throws ParseException {
         Context context = this;
         mContext = context.getApplicationContext();
         mDatabase = new AthleteBaseHelper(mContext).getWritableDatabase();
@@ -129,7 +143,6 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
         } finally {
             cursor.close();
         }
-
         return athletes;
     }
 
@@ -137,7 +150,7 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
         return this;
     }
 
-    public Athlete getAthlete(String id) {
+    public Athlete getAthlete(String id) throws ParseException {
         AthleteCursorWrapper cursor = queryAthletes(AthleteTable.Cols.ID +
                 " = ?", new String[]{id});
 
@@ -171,7 +184,8 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
         values.put(AthleteTable.Cols.FEET, athlete.getFeet());
         values.put(AthleteTable.Cols.INCHES, athlete.getInches());
         values.put(AthleteTable.Cols.WEIGHT, athlete.getWeight());
-        values.put(AthleteTable.Cols.TWOK, athlete.getTwok());
+        values.put(AthleteTable.Cols.TWOKMIN, athlete.getTwokMin());
+        values.put(AthleteTable.Cols.TWOKSEC, athlete.getTwokSec());
 
         return values;
     }
@@ -186,6 +200,11 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
         lastNameEdit = (EditText) findViewById(R.id.LastNameText);
         ageEdit = (EditText) findViewById(R.id.AgeText);
         yearsPlayedEdit = (EditText) findViewById(R.id.YearsPlayedText);
+        weightEdit = (EditText) findViewById(R.id.WeightText);
+        feetEdit = (EditText) findViewById(R.id.FeetText);
+        inchesEdit = (EditText) findViewById(R.id.InchesText);
+        twokMinEdit = (EditText) findViewById(R.id.TwoKMinText);
+        twokSecEdit = (EditText) findViewById(R.id.TwoKSecText);
         radioGroup = (RadioGroup) findViewById(R.id.RadioGroup);
 
         boolean check = checkIfEmpty();
@@ -193,7 +212,8 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
         if (!check) {
             id = sLastName + sFirstName;
 
-            newAthlete = new Athlete(sFirstName, sLastName, sPosition, sAge, sYearsPlayed);
+            newAthlete = new Athlete(sFirstName, sLastName, sPosition, sAge, sYearsPlayed,
+                    sFeet, sInches, sWeight, sTwokMin, sTwokSec);
 
             addAthlete(newAthlete);
 
@@ -201,6 +221,11 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
             lastNameEdit.setText("");
             ageEdit.setText("");
             yearsPlayedEdit.setText("");
+            weightEdit.setText("");
+            feetEdit.setText("");
+            inchesEdit.setText("");
+            twokMinEdit.setText("");
+            twokSecEdit.setText("");
             radioGroup.clearCheck();
         }
     }
@@ -242,6 +267,62 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
                 Toast.makeText(getApplicationContext(), "Please enter a valid number", Toast.LENGTH_SHORT).show();
             }
         }
+
+        if (feetEdit.getText().toString().trim().equals("")) {
+            Toast.makeText(getApplicationContext(), "Feet is empty", Toast.LENGTH_SHORT).show();
+            return true;
+        } else {
+            try {
+                sFeet = Integer.parseInt(feetEdit.getText().toString());
+            } catch (NumberFormatException e) {
+                Toast.makeText(getApplicationContext(), "Please enter a valid number", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        if (inchesEdit.getText().toString().trim().equals("")) {
+            Toast.makeText(getApplicationContext(), "Inches is empty", Toast.LENGTH_SHORT).show();
+            return true;
+        } else {
+            try {
+                sInches = Integer.parseInt(inchesEdit.getText().toString());
+            } catch (NumberFormatException e) {
+                Toast.makeText(getApplicationContext(), "Please enter a valid number", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        if (weightEdit.getText().toString().trim().equals("")) {
+            Toast.makeText(getApplicationContext(), "Weight is empty", Toast.LENGTH_SHORT).show();
+            return true;
+        } else {
+            try {
+                sWeight = Integer.parseInt(weightEdit.getText().toString());
+            } catch (NumberFormatException e) {
+                Toast.makeText(getApplicationContext(), "Please enter a valid number", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        if (twokMinEdit.getText().toString().trim().equals("")) {
+            Toast.makeText(getApplicationContext(), "2k minutes is empty", Toast.LENGTH_SHORT).show();
+            return true;
+        } else {
+            try {
+                sTwokMin = Integer.parseInt(twokMinEdit.getText().toString());
+            } catch (NumberFormatException e) {
+                Toast.makeText(getApplicationContext(), "Please enter a valid number", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        if (twokSecEdit.getText().toString().trim().equals("")) {
+            Toast.makeText(getApplicationContext(), "2k seconds is empty", Toast.LENGTH_SHORT).show();
+            return true;
+        } else {
+            try {
+                sTwokSec = Double.parseDouble(twokSecEdit.getText().toString());
+            } catch (NumberFormatException e) {
+                Toast.makeText(getApplicationContext(), "Please enter a valid number", Toast.LENGTH_SHORT).show();
+            }
+        }
+
         if (radioGroup.getCheckedRadioButtonId() == -1) {
             Toast.makeText(getApplicationContext(), "Position is empty", Toast.LENGTH_SHORT).show();
             return true;
@@ -249,7 +330,7 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
         return false;
     }
 
-    public void backToDrag(View view) {
+    public void backToDrag(View view) throws ParseException {
 
         Intent i = new Intent(AthleteRegistration.this, DropActivity.class);
         ArrayList<Athlete> ath = getAthletes();
@@ -259,8 +340,6 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
     }
 
     public void deleteAthlete(View view){
-
-
     }
 
     @Override
