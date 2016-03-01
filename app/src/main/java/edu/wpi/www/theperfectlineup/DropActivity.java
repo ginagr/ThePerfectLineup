@@ -453,4 +453,5 @@ public class DropActivity extends AppCompatActivity implements Parcelable, OnIte
         @Override
         public DropActivity[] newArray(int size)  { return new DropActivity[size]; }
     };
+
 }
