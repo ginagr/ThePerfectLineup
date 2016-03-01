@@ -2,9 +2,11 @@ package edu.wpi.www.theperfectlineup;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
+import android.os.Environment;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.content.res.ResourcesCompat;
@@ -33,6 +35,7 @@ import android.widget.TextView;
 import android.widget.LinearLayout;
 
 
+import java.io.File;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -115,6 +118,14 @@ public class DropActivity extends AppCompatActivity implements Parcelable, OnIte
 // It takes in a viewGroup we want to attach to and an array of athletes
 
 
+    public File getPhotoFile (String ID) {
+        File externalFilesDir = this.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        if (externalFilesDir == null) {
+            return null;
+        }
+        return new File (externalFilesDir, "IMG_"+ ID + ".jpg");
+    }
+
     public void addAthletes(ViewGroup view, List<Athlete> athleteArr) {
         view.setScrollContainer(true);
         LinearLayout[] viewAthletes = new LinearLayout[athleteArr.size()];
@@ -122,12 +133,22 @@ public class DropActivity extends AppCompatActivity implements Parcelable, OnIte
         for (int i = 0; i < athleteArr.size(); i++) {
             LinearLayout profile = (LinearLayout) inflater.inflate(R.layout.bubble_profile, null);
             profile.setOrientation(LinearLayout.VERTICAL);
+            String athleteID = athleteArr.get(i).getID();
+            File mPhotoFile = getPhotoFile(athleteID);
             CircularImageView profile_circle = (CircularImageView) profile.findViewById(R.id.athlete_image_view);
             TextView profile_text = (TextView) profile.findViewById(R.id.athlete_text_view);
             profile_text.setText(athleteArr.get(i).getFirstName() + " " + athleteArr.get(i).getLastName());
             profile_text.setVisibility(View.GONE);
-            Drawable d = ResourcesCompat.getDrawable(getResources(), R.drawable.profile_image, null);
-            profile_circle.setImageDrawable(d);
+
+            Log.d("Adding_athlete_name: ", athleteArr.get(i).getFirstName());
+
+            if (mPhotoFile == null || !mPhotoFile.exists()) {
+                profile_circle.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.profile_image, null));
+            } else {
+                Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(), this);
+                profile_circle.setImageBitmap(bitmap);
+
+            }
             viewAthletes[i] = profile;
             viewAthletes[i].setId(989023490 + i);//needed some unique tag for athletes.
             Spinner spinner = new Spinner(this);

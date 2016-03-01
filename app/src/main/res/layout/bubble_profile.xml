@@ -10,8 +10,8 @@
     android:id="@+id/athlete_view">
     <com.github.siyamed.shapeimageview.CircularImageView
         android:id="@+id/athlete_image_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:src="@drawable/grey_small"
         app:siBorderWidth="3dp"
         app:siBorderColor="@color/lightGrey"/>

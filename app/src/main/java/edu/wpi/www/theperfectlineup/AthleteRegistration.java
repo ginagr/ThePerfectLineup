@@ -1,13 +1,18 @@
 package edu.wpi.www.theperfectlineup;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
@@ -16,8 +21,12 @@ import android.widget.RadioGroup;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.github.siyamed.shapeimageview.RoundedImageView;
+
+import java.io.File;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import edu.wpi.www.theperfectlineup.database.AthleteBaseHelper;
 import edu.wpi.www.theperfectlineup.database.AthleteCursorWrapper;
@@ -59,6 +68,9 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
 
     public static Athlete newAthlete;
     private static final String EXTRA_ARRAY_LIST = "the.perfect.lineup.array.list";
+    private RoundedImageView mPhotoView;
+    private File mPhotoFile;
+    private static final int REQUEST_PHOTO = 2;
 
     public AthleteRegistration() {
     }
@@ -87,6 +99,25 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
         mContext = context.getApplicationContext();
         mDatabase = new AthleteBaseHelper(mContext).getWritableDatabase();
         context = this;
+        mPhotoView = (RoundedImageView) findViewById(R.id.athlete_photo);
+        newAthlete = new Athlete(sFirstName, sLastName, sPosition, sAge, sYearsPlayed,
+                sFeet, sInches, sWeight, sTwokMin, sTwokSec);
+        newAthlete.setId(UUID.randomUUID().toString());
+        updatePhotoView();
+        mPhotoFile = getPhotoFile(newAthlete);
+
+        final Intent captureImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        Uri uri = Uri.fromFile(mPhotoFile);
+        captureImage.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+
+        mPhotoView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(captureImage, REQUEST_PHOTO);
+            }
+        });
+
     }
 
     //TODO: put in athlete fragment
@@ -95,6 +126,41 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
 //        super.onPause();
 //        AthleteRegistration.get(getActivity()).updateAthlete(newAthlete);
 //    }
+
+//    @Override
+//    protected void onPause () {
+//        super.onPause();
+//        updatePhotoView();
+//    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        if (resultCode!= Activity.RESULT_OK) {
+            return;
+        }
+        if (requestCode == REQUEST_PHOTO){
+            updatePhotoView();
+        }
+    }
+
+    private void updatePhotoView(){
+        if (mPhotoFile == null || !mPhotoFile.exists()) {
+            mPhotoView.setImageDrawable(null);
+        } else {
+            Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(), this);
+            mPhotoView.setImageBitmap(bitmap);
+
+        }
+    }
+
+    public File getPhotoFile (Athlete athlete) {
+        File externalFilesDir = this.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        if (externalFilesDir == null) {
+            return null;
+        }
+        return new File (externalFilesDir, athlete.getPhotoFilename());
+    }
+
 
     private AthleteRegistration(Context context) {
         mContext = context.getApplicationContext();
@@ -167,6 +233,7 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
 
         mDatabase.update(AthleteTable.NAME, values, AthleteTable.Cols.ID +
                 " = ? ", new String[]{athleteID});
+
     }
 
     public static void deleteAthlete(String id){
@@ -177,7 +244,7 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
 
     private static ContentValues getContentValues(Athlete athlete) {
         ContentValues values = new ContentValues();
-        values.put(AthleteTable.Cols.ID, athlete.getLastName() + athlete.getFirstName());
+        values.put(AthleteTable.Cols.ID, athlete.getID());
         values.put(AthleteTable.Cols.FIRSTNAME, athlete.getFirstName());
         values.put(AthleteTable.Cols.LASTNAME, athlete.getLastName());
         values.put(AthleteTable.Cols.POSITION, athlete.getPosition());
@@ -212,10 +279,21 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
         boolean check = checkIfEmpty();
 
         if (!check) {
-            id = sLastName + sFirstName;
+            //id = sLastName + sFirstName;
 
-            newAthlete = new Athlete(sFirstName, sLastName, sPosition, sAge, sYearsPlayed,
-                    sFeet, sInches, sWeight, sTwokMin, sTwokSec);
+//            newAthlete Athlete(sFirstName, sLastName, sPosition, sAge, sYearsPlayed,
+//                    sFeet, sInches, sWeight, sTwokMin, sTwokSec);
+
+            newAthlete.setFirstName(sFirstName);
+            newAthlete.setLastName(sLastName);
+            newAthlete.setPosition(sPosition);
+            newAthlete.setAge(sAge);
+            newAthlete.setYearsPlayed(sYearsPlayed);
+            newAthlete.setFeet(sFeet);
+            newAthlete.setInches(sInches);
+            newAthlete.setWeight(sWeight);
+            newAthlete.setTwokMin(sTwokMin);
+            newAthlete.setTwokSec(sTwokSec);
 
             addAthlete(newAthlete);
 
@@ -229,6 +307,8 @@ public class AthleteRegistration extends AppCompatActivity implements Parcelable
             twokMinEdit.setText("");
             twokSecEdit.setText("");
             radioGroup.clearCheck();
+
+            updatePhotoView();
         }
     }
 
