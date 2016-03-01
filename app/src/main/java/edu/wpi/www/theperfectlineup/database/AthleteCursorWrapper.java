@@ -35,6 +35,7 @@ public class AthleteCursorWrapper extends CursorWrapper{
 
         Athlete athlete = new Athlete(firstName, lastName, position, age, yearsPlayed,
                 feet, inches, weight, twokMin, twokSec);
+        athlete.setId(Id);
 
         return athlete;
 

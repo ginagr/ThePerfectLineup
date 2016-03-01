@@ -2,6 +2,7 @@ package edu.wpi.www.theperfectlineup;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 /**
  * Created by Tim on 2/2/2016.
@@ -13,7 +14,7 @@ public class Athlete implements Parcelable{
     private   int position; //1 = Cox, 2 = Port, 3 = Starboard
     private   int age;
     private   int yearsPlayed;
-    private   String  id; // last name + first name
+    private   String id; // last name + first name
     private   int feet;
     private   int inches;
     private   int weight;
@@ -33,7 +34,6 @@ public class Athlete implements Parcelable{
         this.weight = weight;
         this.twokMin = twokMin;
         this.twokSec = twokSec;
-        this.id = lastName + firstName;
     }
 
     protected Athlete(Parcel in) {
@@ -94,10 +94,41 @@ public class Athlete implements Parcelable{
 
     public double getTwokSec() { return twokSec; }
 
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public void setYearsPlayed(int yearsPlayed) {
+        this.yearsPlayed = yearsPlayed;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     @Override
     public int describeContents() {
         return 0;
     }
+
+    public String getPhotoFilename() {
+        Log.d("ID: ",getID()+ " name: " + getFirstName());
+        String id_here = getID();
+        return "IMG_"+ id_here + ".jpg";
+    }
+
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
